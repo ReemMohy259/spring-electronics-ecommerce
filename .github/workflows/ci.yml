@@ -3,8 +3,7 @@ name: Spring E-Commerce CI
 on:
   push:
     branches:
-      - main
-      - develop
+      - "**"
 
   pull_request:
     branches:

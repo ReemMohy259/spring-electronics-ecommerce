@@ -13,21 +13,18 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EcommerceException.class)
-    public ResponseEntity<Map<String, Object>> handleEcommerceException(
-            EcommerceException e) {
-        return buildErrorResponse(e.getMessage(), e.getStatusCode(), e.getErrorCode(),
-                e.getInfo());
+    public ResponseEntity<Map<String, Object>> handleEcommerceException(EcommerceException e) {
+        return buildErrorResponse(e.getMessage(), e.getStatusCode(), e.getErrorCode(), e.getInfo());
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(Exception e) {
-        return buildErrorResponse(e.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.value(), "INTERNAL_SERVER_ERROR",
-                Map.of());
+        return buildErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL_SERVER_ERROR", Map.of());
     }
 
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message,
-            int status, String errorCode, Map<String, Object> info) {
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, int status,
+            String errorCode, Map<String, Object> info) {
         Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("message", message);
         errorResponse.put("statusCode", status);
