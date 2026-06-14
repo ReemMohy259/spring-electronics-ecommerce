@@ -23,19 +23,15 @@ public abstract class EcommerceException extends RuntimeException {
     private final String errorCode;
     private final Map<String, Object> info;
 
-    public EcommerceException(String message,
-                              int statusCode,
-                              String errorCode) {
+    public EcommerceException(String message, int statusCode, String errorCode) {
         super(message);
         this.statusCode = statusCode;
         this.errorCode = errorCode;
         this.info = new LinkedHashMap<>();
     }
 
-    public EcommerceException(String message,
-                              int statusCode,
-                              String errorCode,
-                              Map<String, Object> info) {
+    public EcommerceException(String message, int statusCode, String errorCode,
+            Map<String, Object> info) {
         super(message);
         this.statusCode = statusCode;
         this.errorCode = errorCode;
