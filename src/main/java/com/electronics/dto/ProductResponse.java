@@ -7,9 +7,9 @@ import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 
-public record ProductResponse(Long id, Long merchantId, String name, String description,
-        BigDecimal price, Integer stockQuantity, Integer soldUnits, String sku, String imageUrl,
-        String additionalInfo, OffsetDateTime createdAt, List<CategoryResponse> categories) {
+public record ProductResponse(Integer id, Integer merchantId, String name, String description,
+                              BigDecimal price, Integer stockQuantity, Integer soldUnits, String sku, String imageUrl,
+                              String additionalInfo, OffsetDateTime createdAt, List<CategoryResponse> categories) {
 
     public static ProductResponse from(Product product) {
         List<CategoryResponse> categories = product.getCategories().stream()

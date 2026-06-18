@@ -162,7 +162,7 @@ public class ProductService {
 
     private Set<Category> loadCategories(Set<Long> categoryIds) {
         List<Category> categories = categoryRepository.findAllById(categoryIds);
-        Set<Long> foundIds = categories.stream().map(Category::getId).collect(Collectors.toSet());
+        Set<Integer> foundIds = categories.stream().map(Category::getId).collect(Collectors.toSet());
         Set<Long> missingIds = categoryIds.stream().filter(id -> !foundIds.contains(id))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         if (!missingIds.isEmpty()) {
