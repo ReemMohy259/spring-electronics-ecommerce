@@ -46,7 +46,7 @@ public class ProductService {
     private final MerchantRepository merchantRepository;
 
     @Transactional(readOnly = true)
-    public PageResponse<ProductResponse> findAll(Long categoryId, BigDecimal minimumPrice,
+    public PageResponse<ProductResponse> findAll(Integer categoryId, BigDecimal minimumPrice,
             BigDecimal maximumPrice, String keyword, Pageable pageable) {
         validatePriceRange(minimumPrice, maximumPrice);
         Specification<Product> specification = ProductSpecifications.isActive();
@@ -69,7 +69,7 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public ProductResponse findById(Long id) {
+    public ProductResponse findById(Integer id) {
         return ProductResponse.from(getActiveProduct(id));
     }
 
@@ -82,7 +82,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse update(Long id, ProductRequest request) {
+    public ProductResponse update(Integer id, ProductRequest request) {
         boolean admin = isAdmin();
         Product product = getManageableProduct(id);
         Merchant merchant = admin ? getMerchant(request.merchantId()) : product.getMerchant();
@@ -95,18 +95,18 @@ public class ProductService {
     }
 
     @Transactional
-    public void softDelete(Long id) {
+    public void softDelete(Integer id) {
         Product product = getManageableProduct(id);
         product.setDeleted(true);
         productRepository.save(product);
     }
 
-    private Product getActiveProduct(Long id) {
+    private Product getActiveProduct(Integer id) {
         return productRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    private void applyRequest(Product product, ProductRequest request, Long currentProductId,
+    private void applyRequest(Product product, ProductRequest request, Integer currentProductId,
             Merchant merchant) {
         String sku = normalizeOptional(request.sku());
         ensureSkuAvailable(sku, currentProductId);
@@ -124,7 +124,7 @@ public class ProductService {
         product.setCategories(categories);
     }
 
-    private Product getManageableProduct(Long id) {
+    private Product getManageableProduct(Integer id) {
         if (isAdmin()) {
             return getActiveProduct(id);
         }
@@ -133,7 +133,7 @@ public class ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
-    private Merchant resolveMerchant(Long merchantId) {
+    private Merchant resolveMerchant(Integer merchantId) {
         if (isAdmin()) {
             return getMerchant(merchantId);
         }
@@ -146,7 +146,7 @@ public class ProductService {
         return merchant;
     }
 
-    private Merchant getMerchant(Long merchantId) {
+    private Merchant getMerchant(Integer merchantId) {
         return merchantRepository.findById(merchantId)
                 .orElseThrow(() -> new MerchantNotFoundException(merchantId));
     }
@@ -160,10 +160,11 @@ public class ProductService {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
-    private Set<Category> loadCategories(Set<Long> categoryIds) {
+    private Set<Category> loadCategories(Set<Integer> categoryIds) {
         List<Category> categories = categoryRepository.findAllById(categoryIds);
-        Set<Integer> foundIds = categories.stream().map(Category::getId).collect(Collectors.toSet());
-        Set<Long> missingIds = categoryIds.stream().filter(id -> !foundIds.contains(id))
+        Set<Integer> foundIds = categories.stream().map(Category::getId)
+                .collect(Collectors.toSet());
+        Set<Integer> missingIds = categoryIds.stream().filter(id -> !foundIds.contains(id))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         if (!missingIds.isEmpty()) {
             throw new InvalidRequestException("One or more categories do not exist",
@@ -172,7 +173,7 @@ public class ProductService {
         return new LinkedHashSet<>(categories);
     }
 
-    private void ensureSkuAvailable(String sku, Long currentProductId) {
+    private void ensureSkuAvailable(String sku, Integer currentProductId) {
         if (sku == null) {
             return;
         }

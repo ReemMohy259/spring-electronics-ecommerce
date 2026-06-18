@@ -31,7 +31,7 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public PageResponse<ProductResponse> findAll(@RequestParam(required = false) Long categoryId,
+    public PageResponse<ProductResponse> findAll(@RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String keyword,
@@ -40,7 +40,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponse findById(@PathVariable Long id) {
+    public ProductResponse findById(@PathVariable Integer id) {
         return productService.findById(id);
     }
 
@@ -53,7 +53,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
-    public ProductResponse update(@PathVariable Long id,
+    public ProductResponse update(@PathVariable Integer id,
             @Valid @RequestBody ProductRequest request) {
         return productService.update(id, request);
     }
@@ -61,7 +61,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
-    public void softDelete(@PathVariable Long id) {
+    public void softDelete(@PathVariable Integer id) {
         productService.softDelete(id);
     }
 }

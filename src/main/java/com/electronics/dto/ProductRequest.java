@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 public record ProductRequest(
-        @NotNull(message = "Merchant id is required") @Min(value = 1, message = "Merchant id must be positive") Long merchantId,
+        @NotNull(message = "Merchant id is required") @Min(value = 1, message = "Merchant id must be positive") Integer merchantId,
 
         @NotBlank(message = "Product name is required") @Size(max = 255, message = "Product name must not exceed 255 characters") String name,
 
@@ -28,5 +28,5 @@ public record ProductRequest(
 
         String additionalInfo,
 
-        @NotEmpty(message = "At least one category is required") Set<@NotNull(message = "Category id cannot be null") @Min(value = 1, message = "Category id must be positive") Long> categoryIds) {
+        @NotEmpty(message = "At least one category is required") Set<@NotNull(message = "Category id cannot be null") @Min(value = 1, message = "Category id must be positive") Integer> categoryIds) {
 }

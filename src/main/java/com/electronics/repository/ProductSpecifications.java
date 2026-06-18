@@ -18,7 +18,7 @@ public final class ProductSpecifications {
         return (root, query, builder) -> builder.isFalse(root.get("deleted"));
     }
 
-    public static Specification<Product> hasCategory(Long categoryId) {
+    public static Specification<Product> hasCategory(Integer categoryId) {
         return (root, query, builder) -> {
             Join<Product, Category> categories = root.join("categories", JoinType.INNER);
             query.distinct(true);

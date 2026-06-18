@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class CategoryNotFoundException extends EcommerceException {
 
-    public CategoryNotFoundException(Long id) {
+    public CategoryNotFoundException(Integer id) {
         super("Category with id=%s not found".formatted(id), HttpStatus.NOT_FOUND.value(),
                 "CATEGORY_NOT_FOUND", Map.of("id", id));
     }

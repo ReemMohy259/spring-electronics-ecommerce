@@ -32,7 +32,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    public CategoryResponse findById(@PathVariable Long id) {
+    public CategoryResponse findById(@PathVariable Integer id) {
         return categoryService.findById(id);
     }
 
@@ -45,7 +45,7 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryResponse update(@PathVariable Long id,
+    public CategoryResponse update(@PathVariable Integer id,
             @Valid @RequestBody CategoryRequest request) {
         return categoryService.update(id, request);
     }
@@ -53,7 +53,7 @@ public class CategoryController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('ADMIN')")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable Integer id) {
         categoryService.delete(id);
     }
 }

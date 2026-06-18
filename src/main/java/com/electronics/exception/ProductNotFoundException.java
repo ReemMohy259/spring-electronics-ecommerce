@@ -10,11 +10,11 @@ public class ProductNotFoundException extends EcommerceException {
     private static final int STATUS_CODE = HttpStatus.NOT_FOUND.value();
     private static final String MESSAGE_TEMPLATE = "Product with id=%s not found";
 
-    public ProductNotFoundException(Long id) {
+    public ProductNotFoundException(Integer id) {
         super(MESSAGE_TEMPLATE.formatted(id), STATUS_CODE, ERROR_CODE, Map.of("id", id));
     }
 
-    public ProductNotFoundException(Long id, Map<String, Object> info) {
+    public ProductNotFoundException(Integer id, Map<String, Object> info) {
         super(MESSAGE_TEMPLATE.formatted(id), STATUS_CODE, ERROR_CODE, info);
     }
 }

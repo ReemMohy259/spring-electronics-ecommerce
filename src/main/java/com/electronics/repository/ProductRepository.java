@@ -10,20 +10,20 @@ import java.util.Optional;
 
 public interface ProductRepository
         extends
-            JpaRepository<Product, Long>,
+            JpaRepository<Product, Integer>,
             JpaSpecificationExecutor<Product> {
 
     @EntityGraph(attributePaths = {"merchant", "categories"})
-    Optional<Product> findByIdAndDeletedFalse(Long id);
+    Optional<Product> findByIdAndDeletedFalse(Integer id);
 
     @EntityGraph(attributePaths = {"merchant", "categories"})
-    Optional<Product> findByIdAndDeletedFalseAndMerchantUsername(Long id, String username);
+    Optional<Product> findByIdAndDeletedFalseAndMerchantUsername(Integer id, String username);
 
     boolean existsBySkuIgnoreCase(String sku);
 
-    boolean existsBySkuIgnoreCaseAndIdNot(String sku, Long id);
+    boolean existsBySkuIgnoreCaseAndIdNot(String sku, Integer id);
 
-    boolean existsByCategoriesId(Long categoryId);
+    boolean existsByCategoriesId(Integer categoryId);
 
     @EntityGraph(attributePaths = {"merchant", "categories"})
     List<Product> findByDeletedFalseOrderByNameAsc();

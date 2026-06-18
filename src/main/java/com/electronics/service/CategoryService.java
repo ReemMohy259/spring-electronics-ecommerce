@@ -29,7 +29,7 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryResponse findById(Long id) {
+    public CategoryResponse findById(Integer id) {
         return CategoryResponse.from(getCategory(id));
     }
 
@@ -44,7 +44,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryResponse update(Long id, CategoryRequest request) {
+    public CategoryResponse update(Integer id, CategoryRequest request) {
         Category category = getCategory(id);
         String name = normalizeName(request.name());
         ensureNameAvailable(name, id);
@@ -53,7 +53,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Integer id) {
         Category category = getCategory(id);
         if (productRepository.existsByCategoriesId(id)) {
             throw new ResourceInUseException("Category", id);
@@ -61,11 +61,11 @@ public class CategoryService {
         categoryRepository.delete(category);
     }
 
-    private Category getCategory(Long id) {
+    private Category getCategory(Integer id) {
         return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
     }
 
-    private void ensureNameAvailable(String name, Long currentId) {
+    private void ensureNameAvailable(String name, Integer currentId) {
         boolean exists = currentId == null
                 ? categoryRepository.existsByNameIgnoreCase(name)
                 : categoryRepository.existsByNameIgnoreCaseAndIdNot(name, currentId);
