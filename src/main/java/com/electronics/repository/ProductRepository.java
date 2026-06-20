@@ -27,4 +27,7 @@ public interface ProductRepository
 
     @EntityGraph(attributePaths = {"merchant", "categories"})
     List<Product> findByDeletedFalseOrderByNameAsc();
+
+    List<Product> findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
+            Integer stockQuantity);
 }
