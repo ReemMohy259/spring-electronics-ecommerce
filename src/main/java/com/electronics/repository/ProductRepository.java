@@ -25,9 +25,6 @@ public interface ProductRepository
 
     boolean existsByCategoriesId(Integer categoryId);
 
-    @EntityGraph(attributePaths = {"merchant", "categories"})
-    List<Product> findByDeletedFalseOrderByNameAsc();
-
     List<Product> findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
             Integer stockQuantity);
 }
