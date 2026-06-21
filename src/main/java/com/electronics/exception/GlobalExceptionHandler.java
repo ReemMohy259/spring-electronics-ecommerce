@@ -49,12 +49,8 @@ public class GlobalExceptionHandler {
             errors.put(field, message);
         });
 
-        return buildErrorResponse(
-                "Constraint violation",
-                HttpStatus.BAD_REQUEST.value(),
-                "CONSTRAINT_VIOLATION",
-                Map.of("fields", errors)
-        );
+        return buildErrorResponse("Constraint violation", HttpStatus.BAD_REQUEST.value(),
+                "CONSTRAINT_VIOLATION", Map.of("fields", errors));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -69,11 +65,7 @@ public class GlobalExceptionHandler {
             fieldErrors.put(field, message);
         });
 
-        return buildErrorResponse(
-                "Validation failed",
-                HttpStatus.BAD_REQUEST.value(),
-                "VALIDATION_ERROR",
-                Map.of("fields", fieldErrors)
-        );
+        return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_ERROR", Map.of("fields", fieldErrors));
     }
 }
