@@ -1,7 +1,10 @@
 package com.electronics.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -32,5 +35,45 @@ public class GlobalExceptionHandler {
         errorResponse.put("info", info);
         errorResponse.put("timestamp", LocalDateTime.now());
         return ResponseEntity.status(status).body(errorResponse);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(
+            ConstraintViolationException ex) {
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        ex.getConstraintViolations().forEach(v -> {
+            String field = v.getPropertyPath().toString();
+            String message = v.getMessage();
+            errors.put(field, message);
+        });
+
+        return buildErrorResponse(
+                "Constraint violation",
+                HttpStatus.BAD_REQUEST.value(),
+                "CONSTRAINT_VIOLATION",
+                Map.of("fields", errors)
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(
+            MethodArgumentNotValidException ex) {
+
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String field = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            fieldErrors.put(field, message);
+        });
+
+        return buildErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_ERROR",
+                Map.of("fields", fieldErrors)
+        );
     }
 }
