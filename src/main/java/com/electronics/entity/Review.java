@@ -36,4 +36,10 @@ public class Review {
     @NotNull
     @Column(name = "rating", nullable = false)
     private Short rating;
+
+    @Override
+    public String toString() {
+        return "Review{" + "id=" + id + ", user=" + user.getUsername() + ", product="
+                + product.getName() + ", comment='" + comment + '\'' + ", rating=" + rating + '}';
+    }
 }
