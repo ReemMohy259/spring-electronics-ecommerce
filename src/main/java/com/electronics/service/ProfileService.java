@@ -38,14 +38,27 @@ public class ProfileService {
     }
 
     public void updateProfile(UpdateProfileRequest request) {
+
         User user = getCurrentUser();
 
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        user.setBirthDate(request.birthDate());
-        user.setProfilePicUrl(request.profilePicUrl());
+        if (request.firstName() != null) {
+            user.setFirstName(request.firstName());
+        }
 
-        if (user.getRole() == Role.MERCHANT && user instanceof Merchant merchant) {
+        if (request.lastName() != null) {
+            user.setLastName(request.lastName());
+        }
+
+        if (request.birthDate() != null) {
+            user.setBirthDate(request.birthDate());
+        }
+
+        if (request.profilePicUrl() != null) {
+            user.setProfilePicUrl(request.profilePicUrl());
+        }
+
+        if (user.getRole() == Role.MERCHANT && user instanceof Merchant merchant
+                && request.about() != null) {
             merchant.setAbout(request.about());
         }
 

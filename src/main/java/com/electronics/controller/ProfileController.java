@@ -3,6 +3,7 @@ package com.electronics.controller;
 import com.electronics.dto.ProfileResponse;
 import com.electronics.dto.UpdateProfileRequest;
 import com.electronics.service.ProfileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,8 @@ public class ProfileController {
         return profileService.getCurrentProfile();
     }
 
-    @PutMapping
-    public void updateProfile(@RequestBody UpdateProfileRequest request) {
+    @PatchMapping
+    public void updateProfile(@Valid @RequestBody UpdateProfileRequest request) {
         profileService.updateProfile(request);
     }
 }

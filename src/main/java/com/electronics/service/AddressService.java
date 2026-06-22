@@ -2,6 +2,7 @@ package com.electronics.service;
 
 import com.electronics.dto.AddressRequest;
 import com.electronics.dto.AddressResponse;
+import com.electronics.dto.UpdateAddressRequest;
 import com.electronics.entity.Address;
 import com.electronics.entity.User;
 import com.electronics.exception.AddressNotFoundException;
@@ -52,6 +53,14 @@ public class AddressService {
                 .toList();
     }
 
+    public AddressResponse getAddress(Integer addressId) {
+
+        return addressRepository.findById(addressId)
+                .map(a -> new AddressResponse(a.getId(), a.getGovernment(), a.getCity(),
+                        a.getStreet(), a.getBuildingNo(), a.getDescription()))
+                .orElseThrow(() -> new AddressNotFoundException(addressId));
+    }
+
     public void deleteAddress(Integer id) {
         String email = SecurityUtil.getCurrentUserEmail();
 
@@ -63,5 +72,35 @@ public class AddressService {
         }
 
         addressRepository.delete(address);
+    }
+
+    public void updateAddress(UpdateAddressRequest request) {
+
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        Address address = addressRepository.findById(request.getId())
+                .orElseThrow(() -> new AddressNotFoundException(request.getId()));
+
+        if (!address.getUser().getEmail().equals(email)) {
+            throw new InvalidRequestException("Not allowed, ownership required");
+        }
+
+        if (request.getCity() != null) {
+            address.setCity(request.getCity());
+        }
+        if (request.getBuildingNo() != null) {
+            address.setBuildingNo(request.getBuildingNo());
+        }
+        if (request.getDescription() != null) {
+            address.setDescription(request.getDescription());
+        }
+        if (request.getStreet() != null) {
+            address.setStreet(request.getStreet());
+        }
+        if (request.getGovernment() != null) {
+            address.setGovernment(request.getGovernment());
+        }
+
+        addressRepository.save(address);
     }
 }

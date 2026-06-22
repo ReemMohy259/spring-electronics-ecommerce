@@ -1,5 +1,19 @@
 package com.electronics.dto;
 
-public record AddressRequest(String government, String city, String street, String buildingNo,
-        String description) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record AddressRequest(
+
+        @NotBlank(message = "Government is required") @Size(max = 100) String government,
+
+        @NotBlank(message = "City is required") @Size(max = 100) String city,
+
+        @NotBlank(message = "Street is required") @Size(max = 150) String street,
+
+        @NotBlank(message = "Building number is required") @Size(max = 20) String buildingNo,
+
+        @Size(max = 1000) String description
+
+) {
 }
