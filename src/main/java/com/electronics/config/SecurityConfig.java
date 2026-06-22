@@ -7,12 +7,16 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-public class config {
+public class SecurityConfig {
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(
-                auth -> auth.requestMatchers("/**").permitAll().anyRequest().authenticated())
-                .build();
+        return http.csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .build();
     }
 }

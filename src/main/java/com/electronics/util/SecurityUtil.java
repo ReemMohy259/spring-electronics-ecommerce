@@ -6,6 +6,10 @@ public class SecurityUtil {
         return "john@example.com";
     }
 
+    public static Integer getCurrentUserId() {
+        return 1;
+    }
+
     // public static Jwt getJwt() {
     // return (Jwt)
     // SecurityContextHolder.getContext().getAuthentication().getPrincipal();
