@@ -8,6 +8,6 @@ public class UserNotFoundException extends EcommerceException {
 
     public UserNotFoundException(String email) {
         super("User with email=%s not found".formatted(email), HttpStatus.NOT_FOUND.value(),
-                "USER_NOT_FOUND", Map.of("email", email));
+            "USER_NOT_FOUND", Map.of("email", email));
     }
 }

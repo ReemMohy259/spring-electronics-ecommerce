@@ -31,14 +31,14 @@ public class ReviewService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         if (reviewRepository.findByUser_EmailAndProduct_Id(email, request.getProductId())
-                .isPresent()) {
+            .isPresent()) {
             throw new ProductReviewedException(email, request.getProductId());
         }
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+            .orElseThrow(() -> new UserNotFoundException(email));
         Product product = productRepository.findById(request.getProductId())
-                .orElseThrow(() -> new ProductNotFoundException(request.getProductId()));
+            .orElseThrow(() -> new ProductNotFoundException(request.getProductId()));
 
         Review review = new Review();
         review.setUser(user);
@@ -53,15 +53,20 @@ public class ReviewService {
 
     public Page<ReviewResponse> getProductReviews(Integer productId, Pageable pageable) {
         return reviewRepository.findAllByProduct_Id(productId, pageable)
-                .map(r -> new ReviewResponse(r.getId(), r.getUser().getUsername(),
-                        r.getProduct().getId(), r.getRating(), r.getComment()));
+            .map(
+                r -> new ReviewResponse(
+                    r.getId(),
+                    r.getUser().getUsername(),
+                    r.getProduct().getId(),
+                    r.getRating(),
+                    r.getComment()));
     }
 
     public void deleteReview(Integer productId) {
         String email = SecurityUtil.getCurrentUserEmail();
 
-        Optional<Review> reviewOpt = reviewRepository.findByUser_EmailAndProduct_Id(email,
-                productId);
+        Optional<Review> reviewOpt = reviewRepository
+            .findByUser_EmailAndProduct_Id(email, productId);
         if (reviewOpt.isEmpty()) {
             throw new ReviewNotFoundException(email, productId);
         }
@@ -77,8 +82,8 @@ public class ReviewService {
 
         String email = SecurityUtil.getCurrentUserEmail();
 
-        Optional<Review> reviewOpt = reviewRepository.findByUser_EmailAndProduct_Id(email,
-                request.getProductId());
+        Optional<Review> reviewOpt = reviewRepository
+            .findByUser_EmailAndProduct_Id(email, request.getProductId());
         if (reviewOpt.isEmpty()) {
             throw new ReviewNotFoundException(email, request.getProductId());
         }

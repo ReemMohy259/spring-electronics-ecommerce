@@ -27,8 +27,8 @@ public final class ProductSpecifications {
     }
 
     public static Specification<Product> priceAtLeast(BigDecimal minimumPrice) {
-        return (root, query, builder) -> builder.greaterThanOrEqualTo(root.get("price"),
-                minimumPrice);
+        return (root, query, builder) -> builder
+            .greaterThanOrEqualTo(root.get("price"), minimumPrice);
     }
 
     public static Specification<Product> priceAtMost(BigDecimal maximumPrice) {
@@ -38,8 +38,8 @@ public final class ProductSpecifications {
     public static Specification<Product> containsKeyword(String keyword) {
         String searchTerm = "%" + keyword.trim().toLowerCase(Locale.ROOT) + "%";
         return (root, query, builder) -> builder.or(
-                builder.like(builder.lower(root.get("name")), searchTerm),
-                builder.like(builder.lower(root.get("description").as(String.class)), searchTerm),
-                builder.like(builder.lower(root.get("sku")), searchTerm));
+            builder.like(builder.lower(root.get("name")), searchTerm),
+            builder.like(builder.lower(root.get("description").as(String.class)), searchTerm),
+            builder.like(builder.lower(root.get("sku")), searchTerm));
     }
 }

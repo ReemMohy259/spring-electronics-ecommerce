@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository
-        extends
-            JpaRepository<Product, Integer>,
-            JpaSpecificationExecutor<Product> {
+    extends
+        JpaRepository<Product, Integer>,
+        JpaSpecificationExecutor<Product> {
 
     @EntityGraph(attributePaths = {"merchant", "categories"})
     Optional<Product> findByIdAndDeletedFalse(Integer id);
@@ -26,5 +26,5 @@ public interface ProductRepository
     boolean existsByCategoriesId(Integer categoryId);
 
     List<Product> findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
-            Integer stockQuantity);
+        Integer stockQuantity);
 }

@@ -22,12 +22,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(Exception e) {
-        return buildErrorResponse(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "INTERNAL_SERVER_ERROR", Map.of());
+        return buildErrorResponse(
+            e.getMessage(),
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "INTERNAL_SERVER_ERROR",
+            Map.of());
     }
 
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(String message, int status,
-            String errorCode, Map<String, Object> info) {
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(
+        String message,
+        int status,
+        String errorCode,
+        Map<String, Object> info) {
         Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("message", message);
         errorResponse.put("statusCode", status);
@@ -39,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleConstraintViolation(
-            ConstraintViolationException ex) {
+        ConstraintViolationException ex) {
 
         Map<String, String> errors = new LinkedHashMap<>();
 
@@ -49,13 +55,16 @@ public class GlobalExceptionHandler {
             errors.put(field, message);
         });
 
-        return buildErrorResponse("Constraint violation", HttpStatus.BAD_REQUEST.value(),
-                "CONSTRAINT_VIOLATION", Map.of("fields", errors));
+        return buildErrorResponse(
+            "Constraint violation",
+            HttpStatus.BAD_REQUEST.value(),
+            "CONSTRAINT_VIOLATION",
+            Map.of("fields", errors));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(
-            MethodArgumentNotValidException ex) {
+        MethodArgumentNotValidException ex) {
 
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
@@ -65,7 +74,10 @@ public class GlobalExceptionHandler {
             fieldErrors.put(field, message);
         });
 
-        return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST.value(),
-                "VALIDATION_ERROR", Map.of("fields", fieldErrors));
+        return buildErrorResponse(
+            "Validation failed",
+            HttpStatus.BAD_REQUEST.value(),
+            "VALIDATION_ERROR",
+            Map.of("fields", fieldErrors));
     }
 }

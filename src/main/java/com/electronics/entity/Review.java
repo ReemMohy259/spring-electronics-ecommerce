@@ -40,6 +40,6 @@ public class Review {
     @Override
     public String toString() {
         return "Review{" + "id=" + id + ", user=" + user.getUsername() + ", product="
-                + product.getName() + ", comment='" + comment + '\'' + ", rating=" + rating + '}';
+            + product.getName() + ", comment='" + comment + '\'' + ", rating=" + rating + '}';
     }
 }

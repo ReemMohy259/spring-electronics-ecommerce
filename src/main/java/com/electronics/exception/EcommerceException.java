@@ -30,8 +30,11 @@ public abstract class EcommerceException extends RuntimeException {
         this.info = new LinkedHashMap<>();
     }
 
-    public EcommerceException(String message, int statusCode, String errorCode,
-            Map<String, Object> info) {
+    public EcommerceException(
+        String message,
+        int statusCode,
+        String errorCode,
+        Map<String, Object> info) {
         super(message);
         this.statusCode = statusCode;
         this.errorCode = errorCode;

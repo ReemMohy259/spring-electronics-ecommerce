@@ -5,15 +5,15 @@ import jakarta.validation.constraints.Size;
 
 public record AddressRequest(
 
-        @NotBlank(message = "Government is required") @Size(max = 100) String government,
+    @NotBlank(message = "Government is required") @Size(max = 100) String government,
 
-        @NotBlank(message = "City is required") @Size(max = 100) String city,
+    @NotBlank(message = "City is required") @Size(max = 100) String city,
 
-        @NotBlank(message = "Street is required") @Size(max = 150) String street,
+    @NotBlank(message = "Street is required") @Size(max = 150) String street,
 
-        @NotBlank(message = "Building number is required") @Size(max = 20) String buildingNo,
+    @NotBlank(message = "Building number is required") @Size(max = 20) String buildingNo,
 
-        @Size(max = 1000) String description
+    @Size(max = 1000) String description
 
 ) {
 }

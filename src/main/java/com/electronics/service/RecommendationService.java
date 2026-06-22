@@ -29,8 +29,9 @@ public class RecommendationService {
     private final ProductRepository productRepository;
     private final ChatClient chatClient;
 
-    public RecommendationService(ProductRepository productRepository,
-            ChatClient.Builder chatClientBuilder) {
+    public RecommendationService(
+        ProductRepository productRepository,
+        ChatClient.Builder chatClientBuilder) {
         this.productRepository = productRepository;
         this.chatClient = chatClientBuilder.build();
     }
@@ -39,21 +40,25 @@ public class RecommendationService {
     public List<RecommendationResponse> recommend(RecommendationRequest request) {
         int limit = request.limit() == null ? DEFAULT_LIMIT : request.limit();
         List<Product> candidates = productRepository
-                .findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
-                        0);
+            .findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(0);
         if (candidates.isEmpty()) {
             return List.of();
         }
 
-        AiRecommendationResult aiResult = requestRecommendations(request.preferences(), limit,
-                candidates);
+        AiRecommendationResult aiResult = requestRecommendations(
+            request.preferences(),
+            limit,
+            candidates);
         return validateAndComplete(aiResult, candidates, limit);
     }
 
-    private AiRecommendationResult requestRecommendations(String preferences, int limit,
-            List<Product> candidates) {
+    private AiRecommendationResult requestRecommendations(
+        String preferences,
+        int limit,
+        List<Product> candidates) {
         try {
-            return chatClient.prompt().system("""
+            return chatClient.prompt()
+                .system("""
                     You rank products for an electronics store.
                     Select only product IDs present in the candidate list.
                     Never invent products or IDs.
@@ -61,7 +66,8 @@ public class RecommendationService {
                     Rank products by how well they satisfy the customer's stated preferences.
                     Return at most the requested number of recommendations.
                     Keep each reason concise and based only on supplied product information.
-                    """).user("""
+                    """)
+                .user("""
                     Customer preferences:
                     %s
 
@@ -69,24 +75,33 @@ public class RecommendationService {
 
                     Candidate products:
                     %s
-                    """.formatted(preferences.trim(), limit, formatCandidates(candidates))).call()
-                    .entity(AiRecommendationResult.class);
+                    """.formatted(preferences.trim(), limit, formatCandidates(candidates)))
+                .call()
+                .entity(AiRecommendationResult.class);
         } catch (RuntimeException exception) {
-            log.warn("AI recommendations unavailable; using best-selling fallback: {}",
-                    exception.getMessage());
+            log.warn(
+                "AI recommendations unavailable; using best-selling fallback: {}",
+                exception.getMessage());
             return null;
         }
     }
 
-    private List<RecommendationResponse> validateAndComplete(AiRecommendationResult aiResult,
-            List<Product> candidates, int limit) {
-        Map<Integer, Product> candidatesById = candidates.stream().collect(Collectors.toMap(
-                Product::getId, product -> product, (left, right) -> left, LinkedHashMap::new));
+    private List<RecommendationResponse> validateAndComplete(
+        AiRecommendationResult aiResult,
+        List<Product> candidates,
+        int limit) {
+        Map<Integer, Product> candidatesById = candidates.stream()
+            .collect(
+                Collectors.toMap(
+                    Product::getId,
+                    product -> product,
+                    (left, right) -> left,
+                    LinkedHashMap::new));
         Map<Integer, RecommendationResponse> selected = new LinkedHashMap<>();
 
         if (aiResult != null && aiResult.recommendations() != null) {
             for (AiRecommendationResult.Recommendation recommendation : aiResult
-                    .recommendations()) {
+                .recommendations()) {
                 if (recommendation == null || recommendation.productId() == null) {
                     continue;
                 }
@@ -94,9 +109,12 @@ public class RecommendationService {
                 if (product == null || selected.containsKey(product.getId())) {
                     continue;
                 }
-                selected.put(product.getId(),
-                        new RecommendationResponse(ProductResponse.from(product),
-                                normalizeReason(recommendation.reason()), true));
+                selected.put(
+                    product.getId(),
+                    new RecommendationResponse(
+                        ProductResponse.from(product),
+                        normalizeReason(recommendation.reason()),
+                        true));
                 if (selected.size() == limit) {
                     break;
                 }
@@ -107,20 +125,33 @@ public class RecommendationService {
             if (selected.size() == limit) {
                 break;
             }
-            selected.putIfAbsent(product.getId(), new RecommendationResponse(
-                    ProductResponse.from(product), FALLBACK_REASON, false));
+            selected.putIfAbsent(
+                product.getId(),
+                new RecommendationResponse(ProductResponse.from(product), FALLBACK_REASON, false));
         }
         return new ArrayList<>(selected.values());
     }
 
     private String formatCandidates(List<Product> candidates) {
-        return candidates.stream().map(product -> """
-                ID=%d | NAME=%s | PRICE=%s | CATEGORIES=%s | DESCRIPTION=%s | INFO=%s
-                """.formatted(product.getId(), sanitize(product.getName()), product.getPrice(),
-                product.getCategories().stream().map(category -> sanitize(category.getName()))
-                        .sorted().limit(5).collect(Collectors.joining(", ")),
-                sanitize(product.getDescription()), sanitize(product.getAdditionalInfo())).trim())
-                .collect(Collectors.joining("\n"));
+        return candidates.stream()
+            .map(
+                product -> """
+                    ID=%d | NAME=%s | PRICE=%s | CATEGORIES=%s | DESCRIPTION=%s | INFO=%s
+                    """
+                    .formatted(
+                        product.getId(),
+                        sanitize(product.getName()),
+                        product.getPrice(),
+                        product.getCategories()
+                            .stream()
+                            .map(category -> sanitize(category.getName()))
+                            .sorted()
+                            .limit(5)
+                            .collect(Collectors.joining(", ")),
+                        sanitize(product.getDescription()),
+                        sanitize(product.getAdditionalInfo()))
+                    .trim())
+            .collect(Collectors.joining("\n"));
     }
 
     private String normalizeReason(String reason) {
@@ -132,8 +163,7 @@ public class RecommendationService {
             return "";
         }
         String sanitized = value.replace('|', '/').replaceAll("\\s+", " ").trim();
-        return sanitized.length() <= MAX_TEXT_LENGTH
-                ? sanitized
-                : sanitized.substring(0, MAX_TEXT_LENGTH);
+        return sanitized.length() <= MAX_TEXT_LENGTH ? sanitized
+            : sanitized.substring(0, MAX_TEXT_LENGTH);
     }
 }

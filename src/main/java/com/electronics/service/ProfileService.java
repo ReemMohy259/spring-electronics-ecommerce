@@ -21,7 +21,7 @@ public class ProfileService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+            .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public ProfileResponse getCurrentProfile() {
@@ -32,9 +32,15 @@ public class ProfileService {
             about = merchant.getAbout();
         }
 
-        return new ProfileResponse(user.getFirstName(), user.getLastName(), user.getEmail(),
-                user.getUsername(), user.getRole().name(), user.getBirthDate(),
-                user.getProfilePicUrl(), about);
+        return new ProfileResponse(
+            user.getFirstName(),
+            user.getLastName(),
+            user.getEmail(),
+            user.getUsername(),
+            user.getRole().name(),
+            user.getBirthDate(),
+            user.getProfilePicUrl(),
+            about);
     }
 
     public void updateProfile(UpdateProfileRequest request) {
@@ -58,7 +64,7 @@ public class ProfileService {
         }
 
         if (user.getRole() == Role.MERCHANT && user instanceof Merchant merchant
-                && request.about() != null) {
+            && request.about() != null) {
             merchant.setAbout(request.about());
         }
 

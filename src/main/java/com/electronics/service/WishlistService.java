@@ -17,8 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class WishlistService {
@@ -31,14 +29,14 @@ public class WishlistService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         if (wishlistRepository.findByUser_EmailAndProduct_Id(email, request.productId())
-                .isPresent()) {
+            .isPresent()) {
             return; // already exists
         }
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+            .orElseThrow(() -> new UserNotFoundException(email));
         Product product = productRepository.findById(request.productId())
-                .orElseThrow(() -> new ProductNotFoundException(request.productId()));
+            .orElseThrow(() -> new ProductNotFoundException(request.productId()));
 
         Wishlist wishlist = new Wishlist();
         wishlist.setUser(user);
@@ -51,13 +49,13 @@ public class WishlistService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         wishlistRepository.findByUser_EmailAndProduct_Id(email, productId)
-                .ifPresent(wishlistRepository::delete);
+            .ifPresent(wishlistRepository::delete);
     }
 
     public Page<WishlistResponse> getWishlist(Pageable pageable) {
         String email = SecurityUtil.getCurrentUserEmail();
 
         return wishlistRepository.findAllByUser_Email(email, pageable)
-                .map(w -> new WishlistResponse(ProductResponse.from(w.getProduct())));
+            .map(w -> new WishlistResponse(ProductResponse.from(w.getProduct())));
     }
 }

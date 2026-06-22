@@ -18,8 +18,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping
-    public void addReview(@PathVariable Integer productId,
-            @Valid @RequestBody CreateReviewRequest request) {
+    public void addReview(
+        @PathVariable Integer productId,
+        @Valid @RequestBody CreateReviewRequest request) {
         request.setProductId(productId);
         reviewService.addReview(request);
     }
@@ -35,8 +36,9 @@ public class ReviewController {
     }
 
     @PatchMapping
-    public void updateReview(@PathVariable Integer productId,
-            @Valid @RequestBody UpdateReviewRequest request) {
+    public void updateReview(
+        @PathVariable Integer productId,
+        @Valid @RequestBody UpdateReviewRequest request) {
         request.setProductId(productId);
         reviewService.updateReview(request);
     }

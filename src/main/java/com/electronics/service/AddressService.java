@@ -27,7 +27,7 @@ public class AddressService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(email));
+            .orElseThrow(() -> new UserNotFoundException(email));
     }
 
     public void addAddress(AddressRequest request) {
@@ -47,25 +47,38 @@ public class AddressService {
     public List<AddressResponse> getAddresses() {
         String email = SecurityUtil.getCurrentUserEmail();
 
-        return addressRepository.findByUser_Email(email).stream()
-                .map(a -> new AddressResponse(a.getId(), a.getGovernment(), a.getCity(),
-                        a.getStreet(), a.getBuildingNo(), a.getDescription()))
-                .toList();
+        return addressRepository.findByUser_Email(email)
+            .stream()
+            .map(
+                a -> new AddressResponse(
+                    a.getId(),
+                    a.getGovernment(),
+                    a.getCity(),
+                    a.getStreet(),
+                    a.getBuildingNo(),
+                    a.getDescription()))
+            .toList();
     }
 
     public AddressResponse getAddress(Integer addressId) {
 
         return addressRepository.findById(addressId)
-                .map(a -> new AddressResponse(a.getId(), a.getGovernment(), a.getCity(),
-                        a.getStreet(), a.getBuildingNo(), a.getDescription()))
-                .orElseThrow(() -> new AddressNotFoundException(addressId));
+            .map(
+                a -> new AddressResponse(
+                    a.getId(),
+                    a.getGovernment(),
+                    a.getCity(),
+                    a.getStreet(),
+                    a.getBuildingNo(),
+                    a.getDescription()))
+            .orElseThrow(() -> new AddressNotFoundException(addressId));
     }
 
     public void deleteAddress(Integer id) {
         String email = SecurityUtil.getCurrentUserEmail();
 
         Address address = addressRepository.findById(id)
-                .orElseThrow(() -> new AddressNotFoundException(id));
+            .orElseThrow(() -> new AddressNotFoundException(id));
 
         if (!address.getUser().getEmail().equals(email)) {
             throw new InvalidRequestException("Not allowed, ownership required");
@@ -79,7 +92,7 @@ public class AddressService {
         String email = SecurityUtil.getCurrentUserEmail();
 
         Address address = addressRepository.findById(request.getId())
-                .orElseThrow(() -> new AddressNotFoundException(request.getId()));
+            .orElseThrow(() -> new AddressNotFoundException(request.getId()));
 
         if (!address.getUser().getEmail().equals(email)) {
             throw new InvalidRequestException("Not allowed, ownership required");
