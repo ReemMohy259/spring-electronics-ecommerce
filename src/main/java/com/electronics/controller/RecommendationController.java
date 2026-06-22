@@ -21,7 +21,7 @@ public class RecommendationController {
 
     @PostMapping
     public List<RecommendationResponse> recommend(
-            @Valid @RequestBody RecommendationRequest request) {
+        @Valid @RequestBody RecommendationRequest request) {
         return recommendationService.recommend(request);
     }
 }

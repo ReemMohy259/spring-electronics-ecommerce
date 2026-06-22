@@ -24,8 +24,10 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryResponse> findAll() {
-        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream()
-                .map(CategoryResponse::from).toList();
+        return categoryRepository.findAll(Sort.by(Sort.Direction.ASC, "name"))
+            .stream()
+            .map(CategoryResponse::from)
+            .toList();
     }
 
     @Transactional(readOnly = true)
@@ -66,9 +68,8 @@ public class CategoryService {
     }
 
     private void ensureNameAvailable(String name, Integer currentId) {
-        boolean exists = currentId == null
-                ? categoryRepository.existsByNameIgnoreCase(name)
-                : categoryRepository.existsByNameIgnoreCaseAndIdNot(name, currentId);
+        boolean exists = currentId == null ? categoryRepository.existsByNameIgnoreCase(name)
+            : categoryRepository.existsByNameIgnoreCaseAndIdNot(name, currentId);
         if (exists) {
             throw new DuplicateResourceException("Category", "name", name);
         }

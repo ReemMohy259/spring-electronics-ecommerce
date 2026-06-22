@@ -8,6 +8,6 @@ public class CategoryNotFoundException extends EcommerceException {
 
     public CategoryNotFoundException(Integer id) {
         super("Category with id=%s not found".formatted(id), HttpStatus.NOT_FOUND.value(),
-                "CATEGORY_NOT_FOUND", Map.of("id", id));
+            "CATEGORY_NOT_FOUND", Map.of("id", id));
     }
 }

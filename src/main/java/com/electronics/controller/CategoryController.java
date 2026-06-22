@@ -45,8 +45,9 @@ public class CategoryController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public CategoryResponse update(@PathVariable Integer id,
-            @Valid @RequestBody CategoryRequest request) {
+    public CategoryResponse update(
+        @PathVariable Integer id,
+        @Valid @RequestBody CategoryRequest request) {
         return categoryService.update(id, request);
     }
 

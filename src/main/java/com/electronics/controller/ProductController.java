@@ -31,11 +31,12 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public PageResponse<ProductResponse> findAll(@RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false) BigDecimal maxPrice,
-            @RequestParam(required = false) String keyword,
-            @PageableDefault(size = 20) Pageable pageable) {
+    public PageResponse<ProductResponse> findAll(
+        @RequestParam(required = false) Integer categoryId,
+        @RequestParam(required = false) BigDecimal minPrice,
+        @RequestParam(required = false) BigDecimal maxPrice,
+        @RequestParam(required = false) String keyword,
+        @PageableDefault(size = 20) Pageable pageable) {
         return productService.findAll(categoryId, minPrice, maxPrice, keyword, pageable);
     }
 
@@ -53,8 +54,9 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
-    public ProductResponse update(@PathVariable Integer id,
-            @Valid @RequestBody ProductRequest request) {
+    public ProductResponse update(
+        @PathVariable Integer id,
+        @Valid @RequestBody ProductRequest request) {
         return productService.update(id, request);
     }
 
