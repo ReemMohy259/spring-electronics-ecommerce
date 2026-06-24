@@ -6,7 +6,7 @@ import com.electronics.dto.WishlistResponse;
 import com.electronics.entity.Product;
 import com.electronics.entity.User;
 import com.electronics.entity.Wishlist;
-import com.electronics.exception.ProductNotFoundException;
+import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.exception.UserNotFoundException;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.UserRepository;

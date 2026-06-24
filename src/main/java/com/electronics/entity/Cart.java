@@ -41,4 +41,23 @@ public class Cart {
 
     @OneToMany(mappedBy = "cart")
     private Set<CartItem> cartItems = new LinkedHashSet<>();
+
+    public void addItem(CartItem cartItem) {
+        cartItem.setCart(this);
+        cartItems.add(cartItem);
+    }
+
+    public void removeItem(CartItem cartItem) {
+        cartItem.setCart(null);
+        cartItems.remove(cartItem);
+    }
+
+    public void updateItem(Integer productId, int quantity) {
+        CartItem item = cartItems.stream()
+            .filter(i -> i.getProduct().getId().equals(productId))
+            .findFirst()
+            .orElseThrow();
+
+        item.setQuantity(quantity);
+    }
 }

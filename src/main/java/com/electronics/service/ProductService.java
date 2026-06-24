@@ -9,7 +9,7 @@ import com.electronics.entity.Product;
 import com.electronics.exception.DuplicateResourceException;
 import com.electronics.exception.InvalidRequestException;
 import com.electronics.exception.MerchantNotFoundException;
-import com.electronics.exception.ProductNotFoundException;
+import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.repository.CategoryRepository;
 import com.electronics.repository.MerchantRepository;
 import com.electronics.repository.ProductRepository;

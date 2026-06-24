@@ -1,5 +1,8 @@
 package com.electronics.exception;
 
+import com.electronics.exception.payment.PaymentAlreadyProcessedException;
+import com.electronics.exception.payment.PaymentFailedException;
+import com.electronics.exception.payment.PaymentNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,56 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<String> handlePaymentNotFound(PaymentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PaymentFailedException.class)
+    public ResponseEntity<String> handlePaymentFailed(PaymentFailedException ex) {
+        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
+            .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(PaymentAlreadyProcessedException.class)
+    public ResponseEntity<String> handleAlreadyProcessed(PaymentAlreadyProcessedException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Map<String, Object>> handleConstraintViolation(
+        ConstraintViolationException ex) {
+
+        Map<String, String> errors = new LinkedHashMap<>();
+
+        ex.getConstraintViolations().forEach(v -> {
+            String field = v.getPropertyPath().toString();
+            String message = v.getMessage();
+            errors.put(field, message);
+        });
+
+        return buildErrorResponse("Constraint violation", HttpStatus.BAD_REQUEST.value(),
+            "CONSTRAINT_VIOLATION", Map.of("fields", errors));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationException(
+        MethodArgumentNotValidException ex) {
+
+        Map<String, String> fieldErrors = new LinkedHashMap<>();
+
+        ex.getBindingResult().getAllErrors().forEach(error -> {
+            String field = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            fieldErrors.put(field, message);
+        });
+
+        return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST.value(),
+            "VALIDATION_ERROR", Map.of("fields", fieldErrors));
+    }
 
     @ExceptionHandler(EcommerceException.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(EcommerceException e) {
@@ -42,42 +95,5 @@ public class GlobalExceptionHandler {
         errorResponse.put("timestamp", LocalDateTime.now());
         return ResponseEntity.status(status).body(errorResponse);
     }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleConstraintViolation(
-        ConstraintViolationException ex) {
-
-        Map<String, String> errors = new LinkedHashMap<>();
-
-        ex.getConstraintViolations().forEach(v -> {
-            String field = v.getPropertyPath().toString();
-            String message = v.getMessage();
-            errors.put(field, message);
-        });
-
-        return buildErrorResponse(
-            "Constraint violation",
-            HttpStatus.BAD_REQUEST.value(),
-            "CONSTRAINT_VIOLATION",
-            Map.of("fields", errors));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationException(
-        MethodArgumentNotValidException ex) {
-
-        Map<String, String> fieldErrors = new LinkedHashMap<>();
-
-        ex.getBindingResult().getAllErrors().forEach(error -> {
-            String field = ((FieldError) error).getField();
-            String message = error.getDefaultMessage();
-            fieldErrors.put(field, message);
-        });
-
-        return buildErrorResponse(
-            "Validation failed",
-            HttpStatus.BAD_REQUEST.value(),
-            "VALIDATION_ERROR",
-            Map.of("fields", fieldErrors));
-    }
+    
 }
