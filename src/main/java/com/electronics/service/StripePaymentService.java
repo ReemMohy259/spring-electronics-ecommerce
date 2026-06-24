@@ -13,10 +13,9 @@ import java.math.BigDecimal;
 @Service
 public class StripePaymentService {
 
-    public PaymentIntent createPaymentIntent(BigDecimal amount, String currency) throws StripeException {
-        long amountInCents = amount
-            .multiply(BigDecimal.valueOf(100))
-            .longValue();
+    public PaymentIntent createPaymentIntent(BigDecimal amount, String currency)
+        throws StripeException {
+        long amountInCents = amount.multiply(BigDecimal.valueOf(100)).longValue();
 
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
             .setAmount(amountInCents)
@@ -24,8 +23,7 @@ public class StripePaymentService {
             .setAutomaticPaymentMethods(
                 PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
                     .setEnabled(true)
-                    .build()
-            )
+                    .build())
             .build();
 
         return PaymentIntent.create(params);

@@ -20,20 +20,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PaymentNotFoundException.class)
     public ResponseEntity<String> handlePaymentNotFound(PaymentNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(PaymentFailedException.class)
     public ResponseEntity<String> handlePaymentFailed(PaymentFailedException ex) {
-        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
-            .body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
     }
 
     @ExceptionHandler(PaymentAlreadyProcessedException.class)
     public ResponseEntity<String> handleAlreadyProcessed(PaymentAlreadyProcessedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -48,8 +45,11 @@ public class GlobalExceptionHandler {
             errors.put(field, message);
         });
 
-        return buildErrorResponse("Constraint violation", HttpStatus.BAD_REQUEST.value(),
-            "CONSTRAINT_VIOLATION", Map.of("fields", errors));
+        return buildErrorResponse(
+            "Constraint violation",
+            HttpStatus.BAD_REQUEST.value(),
+            "CONSTRAINT_VIOLATION",
+            Map.of("fields", errors));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -64,8 +64,11 @@ public class GlobalExceptionHandler {
             fieldErrors.put(field, message);
         });
 
-        return buildErrorResponse("Validation failed", HttpStatus.BAD_REQUEST.value(),
-            "VALIDATION_ERROR", Map.of("fields", fieldErrors));
+        return buildErrorResponse(
+            "Validation failed",
+            HttpStatus.BAD_REQUEST.value(),
+            "VALIDATION_ERROR",
+            Map.of("fields", fieldErrors));
     }
 
     @ExceptionHandler(EcommerceException.class)
@@ -95,5 +98,5 @@ public class GlobalExceptionHandler {
         errorResponse.put("timestamp", LocalDateTime.now());
         return ResponseEntity.status(status).body(errorResponse);
     }
-    
+
 }

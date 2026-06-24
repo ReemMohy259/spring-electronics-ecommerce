@@ -1,6 +1,7 @@
 package com.electronics.service;
 
 import com.electronics.dto.CurrentUser;
+import com.electronics.entity.Role;
 import com.electronics.entity.User;
 import com.electronics.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -83,7 +84,7 @@ public class CurrentUserService {
             user.getProfilePicUrl());
     }
 
-    private Set<String> extractRoles(Jwt jwt) {
+    private Set<Role> extractRoles(Jwt jwt) {
         Object realmAccessObj = jwt.getClaims().get("realm_access");
         if (!(realmAccessObj instanceof Map<?, ?> realmAccess)) {
             return Set.of();
@@ -94,7 +95,7 @@ public class CurrentUserService {
             return Set.of();
         }
 
-        return roles.stream().map(Object::toString).collect(Collectors.toSet());
+        return roles.stream().map(Object::toString).map(Role::valueOf).collect(Collectors.toSet());
     }
 
     private Jwt getCurrentJwt() {

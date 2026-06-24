@@ -24,9 +24,7 @@ public class CartController {
     }
 
     @PostMapping("/items")
-    public ResponseEntity<CartResponse> addCartItem(
-        @RequestBody AddToCartRequest request
-    ) {
+    public ResponseEntity<CartResponse> addCartItem(@RequestBody AddToCartRequest request) {
         Integer customerId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(cartService.addToCart(customerId, request));
     }
@@ -34,16 +32,13 @@ public class CartController {
     @PutMapping("/items/{productId}")
     public ResponseEntity<CartResponse> updateItem(
         @PathVariable Integer productId,
-        @Valid @RequestBody UpdateCartItemRequest request
-    ) {
+        @Valid @RequestBody UpdateCartItemRequest request) {
         Integer customerId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(cartService.updateItem(customerId, productId, request));
     }
 
     @DeleteMapping("/items/{productId}")
-    public ResponseEntity<CartResponse> removeItem(
-        @PathVariable Integer productId
-    ) {
+    public ResponseEntity<CartResponse> removeItem(@PathVariable Integer productId) {
         Integer customerId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(cartService.removeItem(customerId, productId));
     }

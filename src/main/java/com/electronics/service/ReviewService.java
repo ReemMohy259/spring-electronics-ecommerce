@@ -6,11 +6,11 @@ import com.electronics.dto.UpdateReviewRequest;
 import com.electronics.entity.Product;
 import com.electronics.entity.Review;
 import com.electronics.entity.User;
-import com.electronics.exception.*;
-import com.electronics.exception.product.ProductNotFoundException;
+import com.electronics.exception.InvalidRequestException;
 import com.electronics.exception.ProductReviewedException;
+import com.electronics.exception.ReviewNotFoundException;
 import com.electronics.exception.UserNotFoundException;
-import com.electronics.repository.UserRepository;
+import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.ReviewRepository;
 import com.electronics.repository.UserRepository;
@@ -50,8 +50,6 @@ public class ReviewService {
         review.setRating(request.getRating());
         review.setComment(request.getComment());
 
-        System.out.println("Test Review" + review);
-
         reviewRepository.save(review);
     }
 
@@ -60,7 +58,7 @@ public class ReviewService {
             .map(
                 r -> new ReviewResponse(
                     r.getId(),
-                    r.getUser().getUsername(),
+                    r.getUser().getEmail(), // TODO:UPDATE IT TO BE USERNAME
                     r.getProduct().getId(),
                     r.getRating(),
                     r.getComment()));

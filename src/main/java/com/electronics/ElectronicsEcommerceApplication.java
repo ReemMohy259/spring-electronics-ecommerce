@@ -26,40 +26,39 @@ public class ElectronicsEcommerceApplication {
     CommandLineRunner commandLineRunner(
         UserRepository userRepository,
         MerchantRepository merchantRepository,
-        CategoryRepository categoryRepository
-    ) {
+        CategoryRepository categoryRepository) {
         return args -> {
-//            Customer user = new Customer();
-//            user.setFirstName("John");
-//            user.setLastName("Doe");
-//            user.setUsername("johndoe552");
-//            user.setEmail("johndoe@gmail.com");
-//            user.setPassword("12345678");
-//            user.setRole(Role.CUSTOMER);
-//            user.setBirthDate(LocalDate.of(2002, 6, 17));
-//            userRepository.save(user);
-//
-//            Merchant merchant = new Merchant();
-//            merchant.setFirstName("Omar");
-//            merchant.setLastName("Ali");
-//            merchant.setEmail("omarali552@gmail.com");
-//            merchant.setUsername("omarali552");
-//            merchant.setPassword("123456789");
-//            merchant.setRole(Role.MERCHANT);
-//            merchant.setDeleted(false);
-//            merchant.setAbout("This is a merchant");
-//            merchantRepository.save(merchant);
+            // Customer user = new Customer();
+            // user.setFirstName("John");
+            // user.setLastName("Doe");
+            // user.setUsername("johndoe552");
+            // user.setEmail("johndoe@gmail.com");
+            // user.setPassword("12345678");
+            // user.setRole(Role.CUSTOMER);
+            // user.setBirthDate(LocalDate.of(2002, 6, 17));
+            // userRepository.save(user);
+            //
+            // Merchant merchant = new Merchant();
+            // merchant.setFirstName("Omar");
+            // merchant.setLastName("Ali");
+            // merchant.setEmail("omarali552@gmail.com");
+            // merchant.setUsername("omarali552");
+            // merchant.setPassword("123456789");
+            // merchant.setRole(Role.MERCHANT);
+            // merchant.setDeleted(false);
+            // merchant.setAbout("This is a merchant");
+            // merchantRepository.save(merchant);
 
-//            Category category1 = new Category();
-//            category1.setName("Mobile");
-//
-//            Category category2 = new Category();
-//            category2.setName("Tablet");
-//
-//            Category category3 = new Category();
-//            category3.setName("PC");
-//
-//            categoryRepository.saveAll(List.of(category2, category1, category3));
+            // Category category1 = new Category();
+            // category1.setName("Mobile");
+            //
+            // Category category2 = new Category();
+            // category2.setName("Tablet");
+            //
+            // Category category3 = new Category();
+            // category3.setName("PC");
+            //
+            // categoryRepository.saveAll(List.of(category2, category1, category3));
         };
     }
 }

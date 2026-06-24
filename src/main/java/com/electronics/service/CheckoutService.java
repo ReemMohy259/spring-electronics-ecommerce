@@ -24,7 +24,7 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class CheckoutService {
 
-    private static final String CURRENCY = "egp";
+    private static final String CURRENCY = "EGP";
 
     private final StripePaymentService stripePaymentService;
     private final PaymentRepository paymentRepository;
@@ -76,8 +76,7 @@ public class CheckoutService {
             intent.getClientSecret(),
             intent.getId(),
             CURRENCY,
-            cart.getTotalPrice()
-        );
+            cart.getTotalPrice());
     }
 
     public OrderResponse confirmCheckout(Integer customerId, ConfirmCheckoutRequest request) {
@@ -85,10 +84,10 @@ public class CheckoutService {
             .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         // 1. Load the Payment record
-        Payment payment = paymentRepository
-            .findByStripePaymentIntentId(request.paymentIntentId())
-            .orElseThrow(() -> new PaymentNotFoundException("Payment not found for intent: "
-                + request.paymentIntentId()));
+        Payment payment = paymentRepository.findByStripePaymentIntentId(request.paymentIntentId())
+            .orElseThrow(
+                () -> new PaymentNotFoundException(
+                    "Payment not found for intent: " + request.paymentIntentId()));
 
         // 2. Idempotency guard — don't process twice
         if (payment.getStatus() == PaymentStatus.SUCCEEDED) {
@@ -101,7 +100,8 @@ public class CheckoutService {
         try {
             intent = stripePaymentService.retrievePaymentIntent(request.paymentIntentId());
         } catch (StripeException e) {
-            throw new PaymentFailedException("Failed to verify payment with Stripe: " + e.getMessage());
+            throw new PaymentFailedException(
+                "Failed to verify payment with Stripe: " + e.getMessage());
         }
 
         // 4. Check Stripe says it actually succeeded
@@ -170,8 +170,7 @@ public class CheckoutService {
                 throw new InsufficientStockException(
                     product.getId(),
                     item.getQuantity(),
-                    product.getStockQuantity()
-                );
+                    product.getStockQuantity());
             }
         }
     }

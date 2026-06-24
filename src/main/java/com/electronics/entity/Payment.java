@@ -25,7 +25,7 @@ public class Payment {
     private Customer customer;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")  // nullable — order doesn't exist yet at init time
+    @JoinColumn(name = "order_id") // nullable — order doesn't exist yet at init time
     private Order order;
 
     @Column(name = "stripe_payment_intent_id", nullable = false, unique = true)

@@ -20,8 +20,10 @@ public class ProductUtil {
 
     public void validateStock(Product product, int requestedQuantity) {
         if (product.getStockQuantity() < requestedQuantity) {
-            throw new InsufficientStockException(product.getId(),
-                requestedQuantity, product.getStockQuantity());
+            throw new InsufficientStockException(
+                product.getId(),
+                requestedQuantity,
+                product.getStockQuantity());
         }
     }
 }

@@ -39,8 +39,7 @@ public class CartService {
         CustomerRepository customerRepository,
         @Lazy CartUtil cartUtil,
         @Lazy ProductUtil productUtil,
-        @Lazy CustomerUtil customerUtil
-    ) {
+        @Lazy CustomerUtil customerUtil) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
         this.productRepository = productRepository;
@@ -68,22 +67,19 @@ public class CartService {
         Cart cart = cartUtil.findOrCreateCart(customer);
 
         cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId())
-            .ifPresentOrElse(
-                existingItem -> {
-                    int newQuantity = existingItem.getQuantity() + request.quantity();
-                    productUtil.validateStock(product, newQuantity);
-                    existingItem.setQuantity(newQuantity);
-                    cartItemRepository.save(existingItem);
-                },
-                () -> {
-                    CartItem newItem = new CartItem();
-                    newItem.setCart(cart);
-                    newItem.setProduct(product);
-                    newItem.setQuantity(request.quantity());
-                    cartItemRepository.save(newItem);
-                    cart.getCartItems().add(newItem);
-                }
-            );
+            .ifPresentOrElse(existingItem -> {
+                int newQuantity = existingItem.getQuantity() + request.quantity();
+                productUtil.validateStock(product, newQuantity);
+                existingItem.setQuantity(newQuantity);
+                cartItemRepository.save(existingItem);
+            }, () -> {
+                CartItem newItem = new CartItem();
+                newItem.setCart(cart);
+                newItem.setProduct(product);
+                newItem.setQuantity(request.quantity());
+                cartItemRepository.save(newItem);
+                cart.getCartItems().add(newItem);
+            });
 
         cartUtil.recalculateTotals(cart);
         cartRepository.save(cart);
@@ -92,7 +88,10 @@ public class CartService {
     }
 
     @Transactional
-    public CartResponse updateItem(Integer customerId, Integer productId, UpdateCartItemRequest request) {
+    public CartResponse updateItem(
+        Integer customerId,
+        Integer productId,
+        UpdateCartItemRequest request) {
         if (request.quantity() == 0) {
             return removeItem(customerId, productId);
         }
@@ -102,7 +101,8 @@ public class CartService {
 
         Cart cart = cartUtil.findCartOrThrow(customer);
 
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId())
+        CartItem cartItem = cartItemRepository
+            .findByCartIdAndProductId(cart.getId(), product.getId())
             .orElseThrow(() -> new CartItemNotFoundException(productId));
 
         productUtil.validateStock(product, request.quantity());
@@ -124,7 +124,8 @@ public class CartService {
 
         Cart cart = cartUtil.findCartOrThrow(customer);
 
-        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId())
+        CartItem cartItem = cartItemRepository
+            .findByCartIdAndProductId(cart.getId(), product.getId())
             .orElseThrow(() -> new CartItemNotFoundException(productId));
 
         cart.getCartItems().remove(cartItem);

@@ -10,20 +10,18 @@ public class InsufficientStockException extends EcommerceException {
     public InsufficientStockException(
         Integer productId,
         int requestedQuantity,
-        int availableQuantity
-    ) {
-        super(
-            String.format(
-                "Insufficient stock for product with id=%d. Requested %d items but only %d are available.",
-                productId, requestedQuantity, availableQuantity
-            ),
-            HttpStatus.CONFLICT.value(),
-            "INSUFFICIENT_STOCK",
+        int availableQuantity) {
+        super(String.format(
+            "Insufficient stock for product with id=%d. Requested %d items but only %d are available.",
+            productId,
+            requestedQuantity,
+            availableQuantity), HttpStatus.CONFLICT.value(), "INSUFFICIENT_STOCK",
             Map.of(
-                "productId", productId,
-                "requestedQuantity", requestedQuantity,
-                "availableQuantity", availableQuantity
-            )
-        );
+                "productId",
+                productId,
+                "requestedQuantity",
+                requestedQuantity,
+                "availableQuantity",
+                availableQuantity));
     }
 }

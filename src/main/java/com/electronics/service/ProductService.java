@@ -1,5 +1,6 @@
 package com.electronics.service;
 
+import com.electronics.dto.CurrentUser;
 import com.electronics.dto.PageResponse;
 import com.electronics.dto.ProductRequest;
 import com.electronics.dto.ProductResponse;
@@ -41,6 +42,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MerchantRepository merchantRepository;
+    private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(
@@ -141,7 +143,8 @@ public class ProductService {
         if (isAdmin()) {
             return getMerchant(merchantId);
         }
-        Merchant merchant = merchantRepository.findByUsername(getAuthentication().getName())
+        CurrentUser c = currentUserService.getCurrentUser();
+        Merchant merchant = merchantRepository.findByEmail(c.email())
             .orElseThrow(() -> new MerchantNotFoundException(merchantId));
         if (!merchant.getId().equals(merchantId)) {
             throw new InvalidRequestException(

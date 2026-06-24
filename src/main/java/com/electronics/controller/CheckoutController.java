@@ -28,8 +28,7 @@ public class CheckoutController {
 
     @PostMapping("/confirm")
     public ResponseEntity<OrderResponse> confirmCheckout(
-        @Valid @RequestBody ConfirmCheckoutRequest request
-    ) {
+        @Valid @RequestBody ConfirmCheckoutRequest request) {
         Integer customerId = SecurityUtil.getCurrentUserId();
         return ResponseEntity.ok(checkoutService.confirmCheckout(customerId, request));
     }
