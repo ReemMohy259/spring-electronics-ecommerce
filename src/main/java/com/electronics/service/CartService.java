@@ -7,7 +7,7 @@ import com.electronics.entity.Cart;
 import com.electronics.entity.CartItem;
 import com.electronics.entity.Customer;
 import com.electronics.entity.Product;
-import com.electronics.exception.CartItemNotFoundException;
+import com.electronics.exception.cart.CartItemNotFoundException;
 import com.electronics.repository.CartItemRepository;
 import com.electronics.repository.CartRepository;
 import com.electronics.repository.CustomerRepository;

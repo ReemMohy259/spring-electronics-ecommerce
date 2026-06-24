@@ -6,7 +6,7 @@ import com.electronics.dto.WishlistResponse;
 import com.electronics.entity.Product;
 import com.electronics.entity.User;
 import com.electronics.entity.Wishlist;
-import com.electronics.exception.ProductNotFoundException;
+import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.exception.UserNotFoundException;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.UserRepository;
@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

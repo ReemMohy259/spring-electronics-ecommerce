@@ -1,5 +1,6 @@
-package com.electronics.exception;
+package com.electronics.exception.cart;
 
+import com.electronics.exception.EcommerceException;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;

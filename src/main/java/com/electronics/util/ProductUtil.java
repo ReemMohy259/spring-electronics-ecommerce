@@ -1,8 +1,8 @@
 package com.electronics.util;
 
 import com.electronics.entity.Product;
-import com.electronics.exception.InsufficientStockException;
-import com.electronics.exception.ProductNotFoundException;
+import com.electronics.exception.product.InsufficientStockException;
+import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

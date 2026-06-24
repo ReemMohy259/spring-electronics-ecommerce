@@ -3,7 +3,7 @@ package com.electronics.util;
 import com.electronics.entity.Cart;
 import com.electronics.entity.CartItem;
 import com.electronics.entity.Customer;
-import com.electronics.exception.CartNotFoundException;
+import com.electronics.exception.cart.CartNotFoundException;
 import com.electronics.repository.CartItemRepository;
 import com.electronics.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
