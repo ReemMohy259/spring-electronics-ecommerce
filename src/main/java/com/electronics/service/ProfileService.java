@@ -7,6 +7,7 @@ import com.electronics.entity.Merchant;
 import com.electronics.entity.Role;
 import com.electronics.repository.MerchantRepository;
 import com.electronics.repository.UserRepository;
+import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +18,11 @@ import java.util.Optional;
 public class ProfileService {
 
     private final UserRepository userRepository;
-    private final CurrentUserService currentUserService;
+    private final CurrentUserDataUtil currentUserDataUtil;
     private final MerchantRepository merchantRepository;
 
-    // private User getCurrentUser() {
-    // String email = SecurityUtil.getCurrentUserEmail();
-    //
-    // return userRepository.findByEmail(email)
-    // .orElseThrow(() -> new UserNotFoundException(email));
-    // }
-
     public ProfileResponse getCurrentProfile() {
-        CurrentUser user = currentUserService.getCurrentUser();
+        CurrentUser user = currentUserDataUtil.getCurrentUser();
 
         String about = null;
         if (user.roles().contains(Role.MERCHANT)) {
@@ -48,6 +42,7 @@ public class ProfileService {
             about);
     }
 
+    // TODO: Integrate with keycloak
     public void updateProfile(UpdateProfileRequest request) {
 
         // User user = getCurrentUser();

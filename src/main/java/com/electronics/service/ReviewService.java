@@ -14,7 +14,7 @@ import com.electronics.exception.product.ProductNotFoundException;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.ReviewRepository;
 import com.electronics.repository.UserRepository;
-import com.electronics.util.SecurityUtil;
+import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +29,11 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final CurrentUserDataUtil currentUserDataUtil;
 
     public void addReview(CreateReviewRequest request) {
 
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         if (reviewRepository.findByUser_EmailAndProduct_Id(email, request.getProductId())
             .isPresent()) {
@@ -43,6 +44,12 @@ public class ReviewService {
             .orElseThrow(() -> new UserNotFoundException(email));
         Product product = productRepository.findById(request.getProductId())
             .orElseThrow(() -> new ProductNotFoundException(request.getProductId()));
+
+        // Set the review displayed name in the user table
+        user.setReviewDisplayedName(
+            currentUserDataUtil.getCurrentUser().firstName()
+                + currentUserDataUtil.getCurrentUser().lastName());
+        userRepository.save(user);
 
         Review review = new Review();
         review.setUser(user);
@@ -58,14 +65,14 @@ public class ReviewService {
             .map(
                 r -> new ReviewResponse(
                     r.getId(),
-                    r.getUser().getEmail(), // TODO:UPDATE IT TO BE USERNAME
+                    r.getUser().getReviewDisplayedName(), // TODO:UPDATE IT TO BE USERNAME
                     r.getProduct().getId(),
                     r.getRating(),
                     r.getComment()));
     }
 
     public void deleteReview(Integer productId) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         Optional<Review> reviewOpt = reviewRepository
             .findByUser_EmailAndProduct_Id(email, productId);
@@ -82,7 +89,7 @@ public class ReviewService {
 
     public void updateReview(UpdateReviewRequest request) {
 
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         Optional<Review> reviewOpt = reviewRepository
             .findByUser_EmailAndProduct_Id(email, request.getProductId());

@@ -4,7 +4,7 @@ import com.electronics.dto.checkout.CheckoutInitResponse;
 import com.electronics.dto.checkout.ConfirmCheckoutRequest;
 import com.electronics.dto.checkout.OrderResponse;
 import com.electronics.service.CheckoutService;
-import com.electronics.util.SecurityUtil;
+import com.electronics.util.CurrentUserDataUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +19,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class CheckoutController {
 
     private final CheckoutService checkoutService;
+    private final CurrentUserDataUtil currentUserDataUtil;
 
     @PostMapping("/init")
     public ResponseEntity<CheckoutInitResponse> initCheckout() {
-        Integer customerId = SecurityUtil.getCurrentUserId();
+        Integer customerId = currentUserDataUtil.getCurrentUserId();
         return ResponseEntity.ok(checkoutService.initiateCheckout(customerId));
     }
 
     @PostMapping("/confirm")
     public ResponseEntity<OrderResponse> confirmCheckout(
         @Valid @RequestBody ConfirmCheckoutRequest request) {
-        Integer customerId = SecurityUtil.getCurrentUserId();
+        Integer customerId = currentUserDataUtil.getCurrentUserId();
         return ResponseEntity.ok(checkoutService.confirmCheckout(customerId, request));
     }
 }
