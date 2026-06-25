@@ -11,7 +11,7 @@ import com.electronics.exception.UserNotFoundException;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.UserRepository;
 import com.electronics.repository.WishlistRepository;
-import com.electronics.util.SecurityUtil;
+import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +24,10 @@ public class WishlistService {
     private final WishlistRepository wishlistRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final CurrentUserDataUtil currentUserDataUtil;
 
     public void addToWishlist(AddWishlistRequest request) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         if (wishlistRepository.findByUser_EmailAndProduct_Id(email, request.productId())
             .isPresent()) {
@@ -46,14 +47,14 @@ public class WishlistService {
     }
 
     public void removeFromWishlist(Integer productId) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         wishlistRepository.findByUser_EmailAndProduct_Id(email, productId)
             .ifPresent(wishlistRepository::delete);
     }
 
     public Page<WishlistResponse> getWishlist(Pageable pageable) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         return wishlistRepository.findAllByUser_Email(email, pageable)
             .map(w -> new WishlistResponse(ProductResponse.from(w.getProduct())));

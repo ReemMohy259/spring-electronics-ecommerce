@@ -10,7 +10,7 @@ import com.electronics.exception.InvalidRequestException;
 import com.electronics.exception.UserNotFoundException;
 import com.electronics.repository.AddressRepository;
 import com.electronics.repository.UserRepository;
-import com.electronics.util.SecurityUtil;
+import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +22,10 @@ public class AddressService {
 
     private final AddressRepository addressRepository;
     private final UserRepository userRepository;
+    private final CurrentUserDataUtil currentUserDataUtil;
 
     private User getCurrentUser() {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException(email));
@@ -45,7 +46,7 @@ public class AddressService {
     }
 
     public List<AddressResponse> getAddresses() {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         return addressRepository.findByUser_Email(email)
             .stream()
@@ -75,7 +76,7 @@ public class AddressService {
     }
 
     public void deleteAddress(Integer id) {
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         Address address = addressRepository.findById(id)
             .orElseThrow(() -> new AddressNotFoundException(id));
@@ -89,7 +90,7 @@ public class AddressService {
 
     public void updateAddress(UpdateAddressRequest request) {
 
-        String email = SecurityUtil.getCurrentUserEmail();
+        String email = currentUserDataUtil.getCurrentUserEmail();
 
         Address address = addressRepository.findById(request.getId())
             .orElseThrow(() -> new AddressNotFoundException(request.getId()));
