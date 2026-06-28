@@ -25,9 +25,6 @@ public class User {
     @Column(name = "email", nullable = false, updatable = false)
     private String email;
 
-    @Column(name = "displayed_name", updatable = false)
-    private String reviewDisplayedName;
-
     @Column(name = "birth_date")
     private LocalDate birthDate;
 

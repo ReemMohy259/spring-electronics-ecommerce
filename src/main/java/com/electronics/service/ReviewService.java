@@ -45,14 +45,12 @@ public class ReviewService {
         Product product = productRepository.findById(request.getProductId())
             .orElseThrow(() -> new ProductNotFoundException(request.getProductId()));
 
-        // Set the review displayed name in the user table
-        user.setReviewDisplayedName(
-            currentUserDataUtil.getCurrentUser().firstName()
-                + currentUserDataUtil.getCurrentUser().lastName());
         userRepository.save(user);
 
         Review review = new Review();
         review.setUser(user);
+        review.setReviewDisplayedName(currentUserDataUtil.getCurrentUser().firstName()
+                + currentUserDataUtil.getCurrentUser().lastName());
         review.setProduct(product);
         review.setRating(request.getRating());
         review.setComment(request.getComment());
@@ -65,7 +63,7 @@ public class ReviewService {
             .map(
                 r -> new ReviewResponse(
                     r.getId(),
-                    r.getUser().getReviewDisplayedName(), // TODO:UPDATE IT TO BE USERNAME
+                    r.getReviewDisplayedName(), // TODO:UPDATE IT TO BE USERNAME
                     r.getProduct().getId(),
                     r.getRating(),
                     r.getComment()));
