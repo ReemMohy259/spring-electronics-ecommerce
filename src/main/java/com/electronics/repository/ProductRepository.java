@@ -16,8 +16,7 @@ public interface ProductRepository
     @EntityGraph(attributePaths = {"merchant", "categories"})
     Optional<Product> findByIdAndDeletedFalse(Integer id);
 
-    @EntityGraph(attributePaths = {"merchant", "categories"})
-    Optional<Product> findByIdAndDeletedFalseAndMerchantUsername(Integer id, String username);
+    Optional<Product> findByIdAndDeletedFalseAndMerchantKeycloakId(Integer id, String merchant_keycloakId);
 
     boolean existsBySkuIgnoreCase(String sku);
 

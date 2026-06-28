@@ -135,7 +135,7 @@ public class ProductService {
             return getActiveProduct(id);
         }
         return productRepository
-            .findByIdAndDeletedFalseAndMerchantUsername(id, getAuthentication().getName())
+            .findByIdAndDeletedFalseAndMerchantKeycloakId(id, currentUserService.getCurrentUser().keycloakId())
             .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
