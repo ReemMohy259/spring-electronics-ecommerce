@@ -1,6 +1,8 @@
 package com.electronics.service;
 
 import com.electronics.dto.CurrentUser;
+import com.electronics.entity.Customer;
+import com.electronics.entity.Merchant;
 import com.electronics.entity.Role;
 import com.electronics.entity.User;
 import com.electronics.repository.UserRepository;
@@ -13,6 +15,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +66,17 @@ public class CurrentUserService {
     }
 
     private User createUserFromJwt(Jwt jwt) {
-        User user = new User();
+        Set<Role> roles = extractRoles(jwt);
+
+        User user;
+        if (roles.contains(Role.MERCHANT)) {
+            user = new Merchant();
+        } else if (roles.contains(Role.CUSTOMER)) {
+            user = new Customer();
+        } else {
+            user = new User();
+        }
+
         user.setKeycloakId(jwt.getSubject());
         user.setEmail(jwt.getClaimAsString("email"));
         user.setDeleted(false);
@@ -95,7 +108,8 @@ public class CurrentUserService {
             return Set.of();
         }
 
-        return roles.stream().map(Object::toString).map(Role::valueOf).collect(Collectors.toSet());
+        Set<String> validRoleNames = Arrays.stream(Role.values()).map(Enum::name).collect(Collectors.toSet());
+        return roles.stream().map(Object::toString).filter(validRoleNames::contains).map(Role::valueOf).collect(Collectors.toSet());
     }
 
     private Jwt getCurrentJwt() {

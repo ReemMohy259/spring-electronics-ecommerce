@@ -24,7 +24,7 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public class CheckoutService {
 
-    private static final String CURRENCY = "EGP";
+    private static final String CURRENCY = "egp";
 
     private final StripePaymentService stripePaymentService;
     private final PaymentRepository paymentRepository;
