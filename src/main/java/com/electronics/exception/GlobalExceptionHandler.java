@@ -76,6 +76,8 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(e.getMessage(), e.getStatusCode(), e.getErrorCode(), e.getInfo());
     }
 
+    // TODO: Handle AuthorizationDeniedException
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(Exception e) {
         return buildErrorResponse(
@@ -89,7 +91,8 @@ public class GlobalExceptionHandler {
         String message,
         int status,
         String errorCode,
-        Map<String, Object> info) {
+        Map<String, Object> info
+    ) {
         Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("message", message);
         errorResponse.put("statusCode", status);

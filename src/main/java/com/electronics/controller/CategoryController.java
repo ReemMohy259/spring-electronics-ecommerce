@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     @GetMapping
+    @PreAuthorize("hasRole('CUSTOMER')")
     public List<CategoryResponse> findAll() {
         return categoryService.findAll();
     }
