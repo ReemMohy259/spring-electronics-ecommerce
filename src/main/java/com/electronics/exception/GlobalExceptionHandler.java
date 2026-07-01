@@ -91,8 +91,7 @@ public class GlobalExceptionHandler {
         String message,
         int status,
         String errorCode,
-        Map<String, Object> info
-    ) {
+        Map<String, Object> info) {
         Map<String, Object> errorResponse = new LinkedHashMap<>();
         errorResponse.put("message", message);
         errorResponse.put("statusCode", status);

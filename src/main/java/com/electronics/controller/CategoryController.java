@@ -27,7 +27,6 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping
-    @PreAuthorize("hasRole('CUSTOMER')")
     public List<CategoryResponse> findAll() {
         return categoryService.findAll();
     }

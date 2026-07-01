@@ -24,11 +24,21 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
+
+    @GetMapping("/featured")
+    public PageResponse<ProductResponse> findFeatured(
+        @RequestParam(required = false) Integer categoryId,
+        @RequestParam(required = false) BigDecimal minPrice,
+        @RequestParam(required = false) BigDecimal maxPrice,
+        @RequestParam(required = false) String keyword,
+        @PageableDefault(size = 20) Pageable pageable) {
+        return productService.findAll(categoryId, minPrice, maxPrice, keyword, pageable);
+    }
 
     @GetMapping
     public PageResponse<ProductResponse> findAll(

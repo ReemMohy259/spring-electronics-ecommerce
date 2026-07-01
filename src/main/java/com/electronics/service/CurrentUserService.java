@@ -108,8 +108,14 @@ public class CurrentUserService {
             return Set.of();
         }
 
-        Set<String> validRoleNames = Arrays.stream(Role.values()).map(Enum::name).collect(Collectors.toSet());
-        return roles.stream().map(Object::toString).filter(validRoleNames::contains).map(Role::valueOf).collect(Collectors.toSet());
+        Set<String> validRoleNames = Arrays.stream(Role.values())
+            .map(Enum::name)
+            .collect(Collectors.toSet());
+        return roles.stream()
+            .map(Object::toString)
+            .filter(validRoleNames::contains)
+            .map(Role::valueOf)
+            .collect(Collectors.toSet());
     }
 
     private Jwt getCurrentJwt() {

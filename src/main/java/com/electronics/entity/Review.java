@@ -37,9 +37,6 @@ public class Review {
     @Column(name = "rating", nullable = false)
     private Short rating;
 
-
     @Column(name = "displayed_name", updatable = false)
     private String reviewDisplayedName;
 }
-
-
