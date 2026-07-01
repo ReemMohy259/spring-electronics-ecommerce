@@ -1,11 +1,16 @@
-package com.electronics.dto;
+package com.electronics.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record CategoryRequest(
+
     @NotBlank(message = "Category name is required")
-    @Size(max = 100, message = "Category name must not exceed 100 characters")
+    @Size(
+        min = 3,
+        max = 50,
+        message = "Category name must be between 3 and 50 characters"
+    )
     String name
 ) {
 }

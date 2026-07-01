@@ -17,8 +17,8 @@ public class Category {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 100)
+    @Size(min = 3, max = 50)
     @NotNull
-    @Column(name = "name", nullable = false, length = 100, unique = true)
+    @Column(name = "name", nullable = false, length = 50, unique = true)
     private String name;
 }
