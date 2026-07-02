@@ -47,13 +47,13 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ProductResponse create(@Valid @RequestBody ProductRequest request) {
         return productService.create(request);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ProductResponse update(
         @PathVariable Integer id,
         @Valid @RequestBody ProductRequest request) {
