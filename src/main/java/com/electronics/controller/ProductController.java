@@ -40,7 +40,7 @@ public class ProductController {
         @RequestParam(required = false) BigDecimal maxPrice,
         @RequestParam(required = false) String keyword,
         @PageableDefault(size = 20) Pageable pageable) {
-        return productService.findAll(categoryId, minPrice, maxPrice, keyword, pageable);
+        return productService.findFeatured(categoryId, minPrice, maxPrice, keyword, pageable);
     }
 
     @GetMapping

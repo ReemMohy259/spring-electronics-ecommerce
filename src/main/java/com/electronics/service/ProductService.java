@@ -72,6 +72,22 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public PageResponse<ProductResponse> findFeatured(
+        Integer categoryId,
+        BigDecimal minimumPrice,
+        BigDecimal maximumPrice,
+        String keyword,
+        Pageable pageable) {
+        validatePriceRange(minimumPrice, maximumPrice);
+        String searchKeyword = StringUtils.hasText(keyword) ? keyword.trim() : null;
+        int size = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
+        Pageable featuredPageable = PageRequest.of(pageable.getPageNumber(), size, Sort.unsorted());
+        Page<Product> products = productRepository.findFeatured(
+            categoryId, minimumPrice, maximumPrice, searchKeyword, featuredPageable);
+        return PageResponse.from(products, ProductResponse::from);
+    }
+
+    @Transactional(readOnly = true)
     public ProductResponse findById(Integer id) {
         return ProductResponse.from(getActiveProduct(id));
     }
