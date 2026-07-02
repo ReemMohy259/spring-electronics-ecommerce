@@ -14,10 +14,7 @@ public class LocalStorageService {
 
     private final String PRODUCTS_IMAGE_SUB_DIR = "products";
 
-    public Path loadProductImage(String filename){
-        return Paths.get(rootDir)
-                .resolve(PRODUCTS_IMAGE_SUB_DIR)
-                .resolve(filename)
-                .normalize();
+    public Path loadProductImage(String filename) {
+        return Paths.get(rootDir).resolve(PRODUCTS_IMAGE_SUB_DIR).resolve(filename).normalize();
     }
 }

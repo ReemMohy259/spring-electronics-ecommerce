@@ -24,7 +24,8 @@ public class FileController {
     private final LocalStorageService localStorageService;
 
     @GetMapping("/products/{filename}")
-    public ResponseEntity<Resource> getProductImage(@PathVariable String filename) throws IOException {
+    public ResponseEntity<Resource> getProductImage(@PathVariable String filename)
+        throws IOException {
 
         Path image = localStorageService.loadProductImage(filename);
 
@@ -41,7 +42,7 @@ public class FileController {
         }
 
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .body(resource);
+            .contentType(MediaType.parseMediaType(contentType))
+            .body(resource);
     }
 }

@@ -32,7 +32,7 @@ public class SecurityConfig {
                         "/actuator/health",
                         "/api/v1/categories/**",
                         "/api/v1/products/**",
-                            "/api/v1/files/**")
+                        "/api/v1/files/**")
                     .permitAll()
                     .requestMatchers("/api/v1/admin/**")
                     .hasRole("ADMIN")
