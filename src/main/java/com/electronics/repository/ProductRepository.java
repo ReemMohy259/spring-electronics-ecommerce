@@ -26,6 +26,8 @@ public interface ProductRepository
 
     boolean existsByCategoriesId(Integer categoryId);
 
+    long countByMerchantIdAndDeletedFalse(Integer merchantId);
+
     List<Product> findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
         Integer stockQuantity);
 }

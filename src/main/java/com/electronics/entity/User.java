@@ -34,4 +34,14 @@ public class User {
     @ColumnDefault("false")
     @Column(name = "deleted")
     private Boolean deleted;
+
+    @Column(name = "createdAt", updatable = false)
+    private LocalDate createdAt;
+
+    @PrePersist
+    private void prePersist(){
+        if(this.createdAt == null){
+            this.createdAt = LocalDate.now();
+        }
+    }
 }

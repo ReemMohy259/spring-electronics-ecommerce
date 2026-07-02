@@ -1,8 +1,10 @@
 package com.electronics.controller;
 
+import com.electronics.dto.MerchantResponse;
 import com.electronics.dto.PageResponse;
 import com.electronics.dto.ProductRequest;
 import com.electronics.dto.ProductResponse;
+import com.electronics.service.MerchantService;
 import com.electronics.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import java.math.BigDecimal;
 public class ProductController {
 
     private final ProductService productService;
+    private final MerchantService merchantService;
 
     @GetMapping("/featured")
     public PageResponse<ProductResponse> findFeatured(
@@ -53,6 +56,11 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponse findById(@PathVariable Integer id) {
         return productService.findById(id);
+    }
+
+    @GetMapping("merchant/{merchantId}")
+    public MerchantResponse findMerchantDetails(@PathVariable Integer merchantId) {
+        return merchantService.findById(merchantId);
     }
 
     @PostMapping
