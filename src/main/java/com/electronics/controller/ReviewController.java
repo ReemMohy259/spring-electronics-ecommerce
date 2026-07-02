@@ -2,6 +2,7 @@ package com.electronics.controller;
 
 import com.electronics.dto.CreateReviewRequest;
 import com.electronics.dto.ReviewResponse;
+import com.electronics.dto.ReviewSummaryResponse;
 import com.electronics.dto.UpdateReviewRequest;
 import com.electronics.service.ReviewService;
 import jakarta.validation.Valid;
@@ -30,6 +31,11 @@ public class ReviewController {
     @GetMapping
     public Page<ReviewResponse> getReviews(@PathVariable Integer productId, Pageable pageable) {
         return reviewService.getProductReviews(productId, pageable);
+    }
+
+    @GetMapping("/summary")
+    public ReviewSummaryResponse getReviewsSummary(@PathVariable Integer productId) {
+        return reviewService.getProductReviewsSummary(productId);
     }
 
     @DeleteMapping

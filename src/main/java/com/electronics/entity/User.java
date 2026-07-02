@@ -22,7 +22,7 @@ public class User {
     @Column(name = "keycloak_id", unique = true, nullable = false, updatable = false)
     private String keycloakId;
 
-    @Column(name = "email", nullable = false, updatable = false)
+    @Column(name = "email", nullable = false, updatable = false, unique = true)
     private String email;
 
     @Column(name = "birth_date")
