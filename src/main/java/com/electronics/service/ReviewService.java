@@ -49,7 +49,8 @@ public class ReviewService {
 
         Review review = new Review();
         review.setUser(user);
-        review.setReviewDisplayedName(currentUserDataUtil.getCurrentUser().firstName()
+        review.setReviewDisplayedName(
+            currentUserDataUtil.getCurrentUser().firstName()
                 + currentUserDataUtil.getCurrentUser().lastName());
         review.setProduct(product);
         review.setRating(request.getRating());

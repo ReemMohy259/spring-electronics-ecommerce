@@ -45,8 +45,7 @@ public class AdminService {
         Order order = orderRepository.findById(id)
             .orElseThrow(() -> new OrderNotFoundException(id));
         if ("CANCELLED".equalsIgnoreCase(order.getStatus())) {
-            throw new InvalidRequestException(
-                "Order is already cancelled", Map.of("id", id));
+            throw new InvalidRequestException("Order is already cancelled", Map.of("id", id));
         }
         order.setStatus("CANCELLED");
         orderRepository.save(order);
