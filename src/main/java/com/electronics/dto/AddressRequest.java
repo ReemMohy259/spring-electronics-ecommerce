@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Size;
 
 public record AddressRequest(
 
+    @NotBlank(message = "Address name is required") @Size(max = 200) String addressName,
+
     @NotBlank(message = "Government is required") @Size(max = 100) String government,
 
     @NotBlank(message = "City is required") @Size(max = 100) String city,

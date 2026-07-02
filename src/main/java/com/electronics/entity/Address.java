@@ -1,6 +1,7 @@
 package com.electronics.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -24,6 +25,11 @@ public class Address {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @NotBlank
+    @Size(max = 200)
+    @Column(name = "address_name", length = 200, nullable = false)
+    private String addressName;
 
     @Size(max = 100)
     @Column(name = "government", length = 100)
