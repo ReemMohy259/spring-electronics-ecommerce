@@ -46,8 +46,7 @@ public interface ProductRepository
              OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
              OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))
         ORDER BY (SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.product.id = p.id) DESC
-        """,
-        countQuery = """
+        """, countQuery = """
         SELECT COUNT(p) FROM Product p
         WHERE p.deleted = false
         AND (:categoryId IS NULL OR :categoryId IN (SELECT c.id FROM p.categories c))
@@ -57,9 +56,10 @@ public interface ProductRepository
              OR LOWER(p.description) LIKE LOWER(CONCAT('%', :keyword, '%'))
              OR LOWER(p.sku) LIKE LOWER(CONCAT('%', :keyword, '%')))
         """)
-    Page<Product> findFeatured(@Param("categoryId") Integer categoryId,
-                               @Param("minPrice") BigDecimal minPrice,
-                               @Param("maxPrice") BigDecimal maxPrice,
-                               @Param("keyword") String keyword,
-                               Pageable pageable);
+    Page<Product> findFeatured(
+        @Param("categoryId") Integer categoryId,
+        @Param("minPrice") BigDecimal minPrice,
+        @Param("maxPrice") BigDecimal maxPrice,
+        @Param("keyword") String keyword,
+        Pageable pageable);
 }

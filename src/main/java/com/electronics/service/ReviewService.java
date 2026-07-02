@@ -81,19 +81,22 @@ public class ReviewService {
 
         Double average = reviewRepository.findAverageRatingByProductId(productId);
         Long totalReviews = reviewRepository.countByProduct_Id(productId);
-        Map<Integer, Long> countsByStars = reviewRepository.findRatingBreakdownByProductId(productId)
+        Map<Integer, Long> countsByStars = reviewRepository
+            .findRatingBreakdownByProductId(productId)
             .stream()
-            .collect(Collectors.toMap(
-                row -> ((Number) row[0]).intValue(),
-                row -> ((Number) row[1]).longValue()));
+            .collect(
+                Collectors.toMap(
+                    row -> ((Number) row[0]).intValue(),
+                    row -> ((Number) row[1]).longValue()));
 
         return new ReviewSummaryResponse(
             average == null ? 0.0 : average,
             totalReviews,
             IntStream.rangeClosed(1, 5)
-                .mapToObj(stars -> new RatingBreakdownResponse(
-                    stars,
-                    countsByStars.getOrDefault(stars, 0L)))
+                .mapToObj(
+                    stars -> new RatingBreakdownResponse(
+                        stars,
+                        countsByStars.getOrDefault(stars, 0L)))
                 .toList());
     }
 

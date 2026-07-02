@@ -82,8 +82,8 @@ public class ProductService {
         String searchKeyword = StringUtils.hasText(keyword) ? keyword.trim() : null;
         int size = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
         Pageable featuredPageable = PageRequest.of(pageable.getPageNumber(), size, Sort.unsorted());
-        Page<Product> products = productRepository.findFeatured(
-            categoryId, minimumPrice, maximumPrice, searchKeyword, featuredPageable);
+        Page<Product> products = productRepository
+            .findFeatured(categoryId, minimumPrice, maximumPrice, searchKeyword, featuredPageable);
         return PageResponse.from(products, ProductResponse::from);
     }
 
