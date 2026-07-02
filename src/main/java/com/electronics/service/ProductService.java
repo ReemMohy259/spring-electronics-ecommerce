@@ -36,6 +36,14 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private static final int MAX_PAGE_SIZE = 100;
+
+    @Transactional(readOnly = true)
+    public PageResponse<ProductResponse> findFeatured(Pageable pageable) {
+        int size = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
+        Pageable limitedPageable = PageRequest.of(pageable.getPageNumber(), size);
+        Page<Product> products = productRepository.findFeatured(limitedPageable);
+        return PageResponse.from(products, ProductResponse::from);
+    }
     private static final Set<String> ALLOWED_SORT_FIELDS = Set
         .of("id", "name", "price", "stockQuantity", "soldUnits", "createdAt");
 
@@ -68,22 +76,6 @@ public class ProductService {
 
         Page<Product> products = productRepository
             .findAll(specification, normalizePageable(pageable));
-        return PageResponse.from(products, ProductResponse::from);
-    }
-
-    @Transactional(readOnly = true)
-    public PageResponse<ProductResponse> findFeatured(
-        Integer categoryId,
-        BigDecimal minimumPrice,
-        BigDecimal maximumPrice,
-        String keyword,
-        Pageable pageable) {
-        validatePriceRange(minimumPrice, maximumPrice);
-        String searchKeyword = StringUtils.hasText(keyword) ? keyword.trim() : null;
-        int size = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
-        Pageable featuredPageable = PageRequest.of(pageable.getPageNumber(), size, Sort.unsorted());
-        Page<Product> products = productRepository
-            .findFeatured(categoryId, minimumPrice, maximumPrice, searchKeyword, featuredPageable);
         return PageResponse.from(products, ProductResponse::from);
     }
 

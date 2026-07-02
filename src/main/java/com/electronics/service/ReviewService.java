@@ -69,6 +69,7 @@ public class ReviewService {
             .map(
                 r -> new ReviewResponse(
                     r.getId(),
+                    r.getUser().getKeycloakId(),
                     r.getReviewDisplayedName(), // TODO:UPDATE IT TO BE USERNAME
                     r.getProduct().getId(),
                     r.getRating(),

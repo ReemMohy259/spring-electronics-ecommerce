@@ -35,12 +35,8 @@ public class ProductController {
 
     @GetMapping("/featured")
     public PageResponse<ProductResponse> findFeatured(
-        @RequestParam(required = false) Integer categoryId,
-        @RequestParam(required = false) BigDecimal minPrice,
-        @RequestParam(required = false) BigDecimal maxPrice,
-        @RequestParam(required = false) String keyword,
         @PageableDefault(size = 20) Pageable pageable) {
-        return productService.findFeatured(categoryId, minPrice, maxPrice, keyword, pageable);
+        return productService.findFeatured(pageable);
     }
 
     @GetMapping
