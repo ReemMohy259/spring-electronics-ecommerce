@@ -41,8 +41,8 @@ public class CheckoutService {
     // creating a new intent. "succeeded" and "canceled" are deliberately excluded
     // and handled as their own branches below — retrieval succeeding tells you
     // nothing about whether the intent is still usable.
-    private static final Set<String> REUSABLE_INTENT_STATUSES = Set.of(
-        "requires_payment_method", "requires_confirmation", "requires_action");
+    private static final Set<String> REUSABLE_INTENT_STATUSES = Set
+        .of("requires_payment_method", "requires_confirmation", "requires_action");
 
     private final StripePaymentService stripePaymentService;
     private final PaymentRepository paymentRepository;
@@ -81,9 +81,8 @@ public class CheckoutService {
 
             PaymentIntent intent;
             try {
-                intent = stripePaymentService.retrievePaymentIntent(
-                    payment.getStripePaymentIntentId()
-                );
+                intent = stripePaymentService
+                    .retrievePaymentIntent(payment.getStripePaymentIntentId());
             } catch (StripeException e) {
                 // Retrieval itself failed — can't trust this row, retire it and fall through.
                 cancelExistingPayment(payment);
@@ -188,14 +187,18 @@ public class CheckoutService {
 
         // 6. Verify the cart total matches what was charged
         if (payment.getAmount().compareTo(cart.getTotalPrice()) != 0) {
-            log.warn("Amount mismatch for customer {}: Charged {}, Cart total {}",
-                customerId, payment.getAmount(), cart.getTotalPrice());
+            log.warn(
+                "Amount mismatch for customer {}: Charged {}, Cart total {}",
+                customerId,
+                payment.getAmount(),
+                cart.getTotalPrice());
 
             throw new CartTotalMismatchException(payment.getAmount(), cart.getTotalPrice());
         }
 
         // 7. Lock and validate products with pessimistic locking
-        // This prevents race conditions where two concurrent checkouts try to buy the last item
+        // This prevents race conditions where two concurrent checkouts try to buy the
+        // last item
         List<Product> lockedProducts = lockAndValidateProducts(cart);
 
         // 8. Create Order
@@ -255,7 +258,8 @@ public class CheckoutService {
         // checkouts touching overlapping products always acquire locks in the same
         // order — this is what actually prevents a deadlock, not just relying on
         // however the DB happens to plan the IN-clause scan.
-        List<Integer> ids = cart.getCartItems().stream()
+        List<Integer> ids = cart.getCartItems()
+            .stream()
             .map(item -> item.getProduct().getId())
             .distinct()
             .sorted()
@@ -266,9 +270,7 @@ public class CheckoutService {
 
         // Verify we got all products
         if (lockedProducts.size() != ids.size()) {
-            List<Integer> foundIds = lockedProducts.stream()
-                .map(Product::getId)
-                .toList();
+            List<Integer> foundIds = lockedProducts.stream().map(Product::getId).toList();
             ids.removeAll(foundIds);
             throw new ProductNotFoundException(ids);
         }
@@ -316,8 +318,10 @@ public class CheckoutService {
         try {
             stripePaymentService.cancelPaymentIntent(payment.getStripePaymentIntentId());
         } catch (StripeException e) {
-            log.warn("Failed to cancel stale PaymentIntent {} in Stripe: {}",
-                payment.getStripePaymentIntentId(), e.getMessage());
+            log.warn(
+                "Failed to cancel stale PaymentIntent {} in Stripe: {}",
+                payment.getStripePaymentIntentId(),
+                e.getMessage());
             // Don't fail the request over this — we're creating a new intent regardless,
             // and a leftover unconfirmed intent in Stripe expires on its own after 24h.
         }

@@ -35,4 +35,6 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         WHERE p.merchant.keycloakId = :keycloakId
         """)
     long countByMerchantKeycloakId(@Param("keycloakId") String keycloakId);
+
+    Page<Order> findByUserId(Integer userId, Pageable pageable);
 }
