@@ -45,4 +45,27 @@ public class FileController {
             .contentType(MediaType.parseMediaType(contentType))
             .body(resource);
     }
+
+    @GetMapping("/profiles/{filename}")
+    public ResponseEntity<Resource> getProfileImage(@PathVariable String filename)
+        throws IOException {
+
+        Path image = localStorageService.loadProfileImage(filename);
+
+        if (!Files.exists(image)) {
+            throw new FileNotFoundException(filename);
+        }
+
+        Resource resource = new UrlResource(image.toUri());
+
+        String contentType = Files.probeContentType(image);
+
+        if (contentType == null) {
+            contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        }
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .body(resource);
+    }
 }

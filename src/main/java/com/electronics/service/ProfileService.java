@@ -6,12 +6,14 @@ import com.electronics.dto.UpdateProfileRequest;
 import com.electronics.entity.Merchant;
 import com.electronics.entity.Role;
 import com.electronics.entity.User;
+import com.electronics.exception.InvalidRequestException;
 import com.electronics.repository.MerchantRepository;
 import com.electronics.repository.UserRepository;
 import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -24,6 +26,9 @@ public class ProfileService {
     private final MerchantRepository merchantRepository;
     private final CurrentUserService currentUserService;
     private final KeycloakAdminService keycloakAdminService;
+    private final LocalStorageService localStorageService;
+
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     public ProfileResponse getCurrentProfile() {
         CurrentUser user = currentUserDataUtil.getCurrentUser();
@@ -72,11 +77,36 @@ public class ProfileService {
             user.setBirthDate(request.birthDate());
         }
 
-        if (request.profilePicUrl() != null) {
-            user.setProfilePicUrl(request.profilePicUrl());
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public String updateProfilePicture(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new InvalidRequestException("File is empty");
         }
 
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new InvalidRequestException("Only image files are allowed");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new InvalidRequestException("File size exceeds maximum allowed size of 5MB");
+        }
+
+        User user = currentUserService.getCurrentUserEntity();
+
+        String oldProfilePic = user.getProfilePicUrl();
+        if (oldProfilePic != null && !oldProfilePic.isBlank()) {
+            localStorageService.deleteProfileImage(oldProfilePic);
+        }
+
+        String filename = localStorageService.saveProfileImage(file);
+        user.setProfilePicUrl(filename);
         userRepository.save(user);
+
+        return filename;
     }
 
 }

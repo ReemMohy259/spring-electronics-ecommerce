@@ -13,8 +13,6 @@ public record UpdateProfileRequest(
 
     @Past(message = "Birth date must be in the past") LocalDate birthDate,
 
-    @Size(max = 2048, message = "Profile picture URL is too long") String profilePicUrl,
-
     @Size(max = 5000, message = "About section cannot exceed 5000 characters") String about
 
 ) {
