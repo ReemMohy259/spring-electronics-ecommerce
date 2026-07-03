@@ -42,7 +42,7 @@ public class MerchantDashboardController {
 
     @GetMapping("/products")
     public PageResponse<ProductResponse> getProducts(
-            @PageableDefault(size = 20) Pageable pageable) {
+        @PageableDefault(size = 20) Pageable pageable) {
         String keycloakId = currentUserDataUtil.getCurrentUser().keycloakId();
         return merchantDashboardService.getProducts(keycloakId, pageable);
     }
@@ -55,14 +55,13 @@ public class MerchantDashboardController {
 
     @PutMapping("/products/{id}")
     public ProductResponse updateProduct(
-            @PathVariable Integer id,
-            @Valid @RequestBody ProductRequest request) {
+        @PathVariable Integer id,
+        @Valid @RequestBody ProductRequest request) {
         return productService.update(id, request);
     }
 
     @GetMapping("/orders")
-    public PageResponse<OrderResponse> getOrders(
-            @PageableDefault(size = 20) Pageable pageable) {
+    public PageResponse<OrderResponse> getOrders(@PageableDefault(size = 20) Pageable pageable) {
         String keycloakId = currentUserDataUtil.getCurrentUser().keycloakId();
         return merchantDashboardService.getOrders(keycloakId, pageable);
     }

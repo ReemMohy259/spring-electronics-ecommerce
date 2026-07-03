@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductRepository
-        extends
+    extends
         JpaRepository<Product, Integer>,
         JpaSpecificationExecutor<Product> {
 
@@ -20,8 +20,8 @@ public interface ProductRepository
     Optional<Product> findByIdAndDeletedFalse(Integer id);
 
     Optional<Product> findByIdAndDeletedFalseAndMerchantKeycloakId(
-            Integer id,
-            String merchant_keycloakId);
+        Integer id,
+        String merchant_keycloakId);
 
     boolean existsBySkuIgnoreCase(String sku);
 
@@ -31,19 +31,23 @@ public interface ProductRepository
 
     long countByMerchantIdAndDeletedFalse(Integer merchantId);
 
-    Page<Product> findByMerchantKeycloakIdAndDeletedFalse(String merchantKeycloakId, Pageable pageable);
+    Page<Product> findByMerchantKeycloakIdAndDeletedFalse(
+        String merchantKeycloakId,
+        Pageable pageable);
 
-    Page<Product> findByMerchantKeycloakIdAndDeletedFalseOrderBySoldUnitsDesc(String merchantKeycloakId, Pageable pageable);
+    Page<Product> findByMerchantKeycloakIdAndDeletedFalseOrderBySoldUnitsDesc(
+        String merchantKeycloakId,
+        Pageable pageable);
 
     long countByMerchantKeycloakIdAndDeletedFalse(String merchantKeycloakId);
 
     List<Product> findTop20ByDeletedFalseAndStockQuantityGreaterThanOrderBySoldUnitsDescCreatedAtDesc(
-            Integer stockQuantity);
+        Integer stockQuantity);
 
     @Query("""
-                SELECT p FROM Product p
-                WHERE p.deleted = false
-                ORDER BY (SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.product.id = p.id) DESC
-            """)
+            SELECT p FROM Product p
+            WHERE p.deleted = false
+            ORDER BY (SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.product.id = p.id) DESC
+        """)
     Page<Product> findFeatured(Pageable pageable);
 }

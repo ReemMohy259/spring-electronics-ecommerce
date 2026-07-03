@@ -32,43 +32,40 @@ public class MerchantDashboardService {
 
         Pageable topFive = PageRequest.of(0, 5);
         Page<Product> topProductsPage = productRepository
-                .findByMerchantKeycloakIdAndDeletedFalseOrderBySoldUnitsDesc(keycloakId, topFive);
+            .findByMerchantKeycloakIdAndDeletedFalseOrderBySoldUnitsDesc(keycloakId, topFive);
         List<ProductResponse> topProducts = topProductsPage.getContent()
-                .stream()
-                .map(ProductResponse::from)
-                .toList();
+            .stream()
+            .map(ProductResponse::from)
+            .toList();
 
         Pageable recentFive = PageRequest.of(0, 5);
         Page<Order> recentOrdersPage = orderRepository
-                .findByMerchantKeycloakId(keycloakId, recentFive);
+            .findByMerchantKeycloakId(keycloakId, recentFive);
         List<OrderResponse> recentOrders = recentOrdersPage.getContent()
-                .stream()
-                .map(order -> OrderResponse.fromEntity(order, null))
-                .toList();
+            .stream()
+            .map(order -> OrderResponse.fromEntity(order, null))
+            .toList();
 
-        BigDecimal totalRevenue =
-                orderRepository.sumRevenueByMerchant(keycloakId);
+        BigDecimal totalRevenue = orderRepository.sumRevenueByMerchant(keycloakId);
 
         return new DashboardStatsResponse(
-                totalProducts,
-                totalRevenue,
-                totalOrders,
-                topProducts,
-                recentOrders
-        );
+            totalProducts,
+            totalRevenue,
+            totalOrders,
+            topProducts,
+            recentOrders);
     }
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> getProducts(String keycloakId, Pageable pageable) {
         Page<Product> products = productRepository
-                .findByMerchantKeycloakIdAndDeletedFalse(keycloakId, pageable);
+            .findByMerchantKeycloakIdAndDeletedFalse(keycloakId, pageable);
         return PageResponse.from(products, ProductResponse::from);
     }
 
     @Transactional(readOnly = true)
     public PageResponse<OrderResponse> getOrders(String keycloakId, Pageable pageable) {
-        Page<Order> orders = orderRepository
-                .findByMerchantKeycloakId(keycloakId, pageable);
+        Page<Order> orders = orderRepository.findByMerchantKeycloakId(keycloakId, pageable);
         return PageResponse.from(orders, order -> OrderResponse.fromEntity(order, null));
     }
 }

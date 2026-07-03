@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -26,7 +27,7 @@ public class ProfileService {
     private final MerchantRepository merchantRepository;
     private final CurrentUserService currentUserService;
     private final KeycloakAdminService keycloakAdminService;
-    private final LocalStorageService localStorageService;
+    private final CloudinaryService cloudinaryService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -41,15 +42,15 @@ public class ProfileService {
         }
 
         return new ProfileResponse(
-                user.id(),
-                user.firstName(),
-                user.lastName(),
-                user.email(),
-                user.username(),
-                user.roles(),
-                user.birthDate(),
-                user.profilePicUrl(),
-                about);
+            user.id(),
+            user.firstName(),
+            user.lastName(),
+            user.email(),
+            user.username(),
+            user.roles(),
+            user.birthDate(),
+            user.profilePicUrl(),
+            about);
     }
 
     @Transactional
@@ -100,16 +101,30 @@ public class ProfileService {
 
         String oldProfilePic = user.getProfilePicUrl();
         if (oldProfilePic != null && !oldProfilePic.isBlank()) {
-            String oldFilename = oldProfilePic.substring(oldProfilePic.lastIndexOf("/") + 1);
-            localStorageService.deleteProfileImage(oldFilename);
+            try {
+                String publicId = extractCloudinaryPublicId(oldProfilePic);
+                if (publicId != null) {
+                    cloudinaryService.deleteImage(publicId);
+                }
+            } catch (Exception ignored) {
+            }
         }
 
-        String filename = localStorageService.saveProfileImage(file);
-        String imageUrl = "/files/profiles/" + filename;
+        Map<?, ?> result = cloudinaryService.uploadImage(file);
+        String imageUrl = (String) result.get("url");
         user.setProfilePicUrl(imageUrl);
         userRepository.save(user);
 
         return imageUrl;
+    }
+
+    private String extractCloudinaryPublicId(String imageUrl) {
+        try {
+            String withoutExtension = imageUrl.substring(0, imageUrl.lastIndexOf('.'));
+            return withoutExtension.substring(withoutExtension.lastIndexOf('/') + 1);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

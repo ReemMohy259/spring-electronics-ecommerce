@@ -24,9 +24,7 @@ public class UploadController {
     @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
     public ResponseEntity<Map> upload(@RequestParam("file") MultipartFile file) {
         Map result = cloudinaryService.uploadImage(file);
-        return ResponseEntity.ok(Map.of(
-                "url", result.get("url"),
-                "publicId", result.get("public_id")
-        ));
+        return ResponseEntity
+            .ok(Map.of("url", result.get("url"), "publicId", result.get("public_id")));
     }
 }
