@@ -183,6 +183,7 @@ public class ProductService {
         Set<Integer> foundIds = categories.stream()
             .map(Category::getId)
             .collect(Collectors.toSet());
+        System.out.println(foundIds);
         Set<Integer> missingIds = categoryIds.stream()
             .filter(id -> !foundIds.contains(id))
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -191,6 +192,7 @@ public class ProductService {
                 "One or more categories do not exist",
                 Map.of("missingCategoryIds", missingIds));
         }
+        System.out.println(categories);
         return new LinkedHashSet<>(categories);
     }
 

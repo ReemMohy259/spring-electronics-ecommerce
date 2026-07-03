@@ -21,4 +21,10 @@ public class Category {
     @NotNull
     @Column(name = "name", nullable = false, length = 100, unique = true)
     private String name;
+
+    @Column(name = "slug", nullable = false, length = 50, unique = true)
+    private String slug;
+
+    @Column(name = "lucid_icon_name")
+    private String lucideIconName;
 }
