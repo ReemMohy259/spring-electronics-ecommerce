@@ -52,7 +52,9 @@ public class LocalStorageService {
             Files.createDirectories(destination.getParent());
             file.transferTo(destination.toFile());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to save profile image to " + destination + ": " + e.getMessage(), e);
+            throw new RuntimeException(
+                "Failed to save profile image to " + destination + ": " + e.getMessage(),
+                e);
         }
 
         return filename;
