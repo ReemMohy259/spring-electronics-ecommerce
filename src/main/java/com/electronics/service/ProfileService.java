@@ -99,14 +99,16 @@ public class ProfileService {
 
         String oldProfilePic = user.getProfilePicUrl();
         if (oldProfilePic != null && !oldProfilePic.isBlank()) {
-            localStorageService.deleteProfileImage(oldProfilePic);
+            String oldFilename = oldProfilePic.substring(oldProfilePic.lastIndexOf("/") + 1);
+            localStorageService.deleteProfileImage(oldFilename);
         }
 
         String filename = localStorageService.saveProfileImage(file);
-        user.setProfilePicUrl(filename);
+        String imageUrl = "/files/profiles/" + filename;
+        user.setProfilePicUrl(imageUrl);
         userRepository.save(user);
 
-        return filename;
+        return imageUrl;
     }
 
 }
