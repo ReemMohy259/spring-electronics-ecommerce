@@ -35,19 +35,19 @@ public class MerchantService {
             merchant.getProfilePicUrl(),
             rating,
             totalProducts,
-            merchant.getCreatedAt()
-        );
+            merchant.getCreatedAt());
     }
 
     public List<MerchantSummaryResponse> findAllSummary() {
-        return merchantRepository.findAll().stream()
-            .map(m -> new MerchantSummaryResponse(
-                m.getId(),
-                m.getBusinessName(),
-                m.getBusinessName(),
-                m.getEmail(),
-                m.getBusinessName()
-            ))
+        return merchantRepository.findAll()
+            .stream()
+            .map(
+                m -> new MerchantSummaryResponse(
+                    m.getId(),
+                    m.getBusinessName(),
+                    m.getBusinessName(),
+                    m.getEmail(),
+                    m.getBusinessName()))
             .toList();
     }
 }

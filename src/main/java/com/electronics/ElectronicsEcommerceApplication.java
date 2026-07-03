@@ -38,12 +38,12 @@ public class ElectronicsEcommerceApplication {
             // user.setBirthDate(LocalDate.of(2002, 6, 17));
             // userRepository.save(user);
             //
-//             Merchant merchant = new Merchant();
-//             merchant.setEmail("omarali552@gmail.com");
-//             merchant.setBusinessName("Laptops");
-//             merchant.setDeleted(false);
-//             merchant.setAbout("This is a merchant");
-//             merchantRepository.save(merchant);
+            // Merchant merchant = new Merchant();
+            // merchant.setEmail("omarali552@gmail.com");
+            // merchant.setBusinessName("Laptops");
+            // merchant.setDeleted(false);
+            // merchant.setAbout("This is a merchant");
+            // merchantRepository.save(merchant);
 
             // Category category1 = new Category();
             // category1.setName("Mobile");
