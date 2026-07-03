@@ -49,6 +49,8 @@ public class CategoryService {
 
         Category category = new Category();
         category.setName(name);
+        category.setSlug(request.slug());
+        category.setLucideIconName(request.lucideIconName());
         return CategoryResponse.from(categoryRepository.save(category));
     }
 

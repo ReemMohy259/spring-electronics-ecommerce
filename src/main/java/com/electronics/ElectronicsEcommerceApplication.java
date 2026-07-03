@@ -39,12 +39,8 @@ public class ElectronicsEcommerceApplication {
             // userRepository.save(user);
             //
             // Merchant merchant = new Merchant();
-            // merchant.setFirstName("Omar");
-            // merchant.setLastName("Ali");
             // merchant.setEmail("omarali552@gmail.com");
-            // merchant.setUsername("omarali552");
-            // merchant.setPassword("123456789");
-            // merchant.setRole(Role.MERCHANT);
+            // merchant.setBusinessName("Laptops");
             // merchant.setDeleted(false);
             // merchant.setAbout("This is a merchant");
             // merchantRepository.save(merchant);

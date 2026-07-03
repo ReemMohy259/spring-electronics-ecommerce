@@ -22,7 +22,7 @@ public class User {
     @Column(name = "keycloak_id", unique = true, nullable = false, updatable = false)
     private String keycloakId;
 
-    @Column(name = "email", nullable = false, updatable = false)
+    @Column(name = "email", nullable = false, updatable = false, unique = true)
     private String email;
 
     @Column(name = "birth_date")
@@ -34,4 +34,14 @@ public class User {
     @ColumnDefault("false")
     @Column(name = "deleted")
     private Boolean deleted;
+
+    @Column(name = "createdAt", updatable = false)
+    private LocalDate createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
 }

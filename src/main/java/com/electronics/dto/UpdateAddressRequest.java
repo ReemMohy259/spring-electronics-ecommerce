@@ -10,6 +10,9 @@ public class UpdateAddressRequest {
 
     Integer id;
 
+    @Size(max = 200)
+    String addressName;
+
     @Size(max = 100)
     String government;
 

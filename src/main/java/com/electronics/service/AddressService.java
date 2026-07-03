@@ -36,6 +36,7 @@ public class AddressService {
 
         Address address = new Address();
         address.setUser(user);
+        address.setAddressName(request.addressName());
         address.setGovernment(request.government());
         address.setCity(request.city());
         address.setStreet(request.street());
@@ -53,6 +54,7 @@ public class AddressService {
             .map(
                 a -> new AddressResponse(
                     a.getId(),
+                    a.getAddressName(),
                     a.getGovernment(),
                     a.getCity(),
                     a.getStreet(),
@@ -67,6 +69,7 @@ public class AddressService {
             .map(
                 a -> new AddressResponse(
                     a.getId(),
+                    a.getAddressName(),
                     a.getGovernment(),
                     a.getCity(),
                     a.getStreet(),
@@ -99,6 +102,9 @@ public class AddressService {
             throw new InvalidRequestException("Not allowed, ownership required");
         }
 
+        if (request.getAddressName() != null) {
+            address.setAddressName(request.getAddressName());
+        }
         if (request.getCity() != null) {
             address.setCity(request.getCity());
         }

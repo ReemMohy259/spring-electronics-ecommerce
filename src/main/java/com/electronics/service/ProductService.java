@@ -36,6 +36,14 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private static final int MAX_PAGE_SIZE = 100;
+
+    @Transactional(readOnly = true)
+    public PageResponse<ProductResponse> findFeatured(Pageable pageable) {
+        int size = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
+        Pageable limitedPageable = PageRequest.of(pageable.getPageNumber(), size);
+        Page<Product> products = productRepository.findFeatured(limitedPageable);
+        return PageResponse.from(products, ProductResponse::from);
+    }
     private static final Set<String> ALLOWED_SORT_FIELDS = Set
         .of("id", "name", "price", "stockQuantity", "soldUnits", "createdAt");
 
@@ -175,6 +183,7 @@ public class ProductService {
         Set<Integer> foundIds = categories.stream()
             .map(Category::getId)
             .collect(Collectors.toSet());
+        System.out.println(foundIds);
         Set<Integer> missingIds = categoryIds.stream()
             .filter(id -> !foundIds.contains(id))
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -183,6 +192,7 @@ public class ProductService {
                 "One or more categories do not exist",
                 Map.of("missingCategoryIds", missingIds));
         }
+        System.out.println(categories);
         return new LinkedHashSet<>(categories);
     }
 

@@ -5,12 +5,17 @@ import com.electronics.dto.ProfileResponse;
 import com.electronics.dto.UpdateProfileRequest;
 import com.electronics.entity.Merchant;
 import com.electronics.entity.Role;
+import com.electronics.entity.User;
+import com.electronics.exception.InvalidRequestException;
 import com.electronics.repository.MerchantRepository;
 import com.electronics.repository.UserRepository;
 import com.electronics.util.CurrentUserDataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -20,6 +25,11 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final CurrentUserDataUtil currentUserDataUtil;
     private final MerchantRepository merchantRepository;
+    private final CurrentUserService currentUserService;
+    private final KeycloakAdminService keycloakAdminService;
+    private final CloudinaryService cloudinaryService;
+
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
     public ProfileResponse getCurrentProfile() {
         CurrentUser user = currentUserDataUtil.getCurrentUser();
@@ -32,6 +42,7 @@ public class ProfileService {
         }
 
         return new ProfileResponse(
+            user.id(),
             user.firstName(),
             user.lastName(),
             user.email(),
@@ -42,33 +53,78 @@ public class ProfileService {
             about);
     }
 
-    // TODO: Integrate with keycloak
+    @Transactional
     public void updateProfile(UpdateProfileRequest request) {
+        User user = currentUserService.getCurrentUserEntity();
 
-        // User user = getCurrentUser();
-        //
-        // if (request.firstName() != null) {
-        // user.setFirstName(request.firstName());
-        // }
-        //
-        // if (request.lastName() != null) {
-        // user.setLastName(request.lastName());
-        // }
-        //
-        // if (request.birthDate() != null) {
-        // user.setBirthDate(request.birthDate());
-        // }
-        //
-        // if (request.profilePicUrl() != null) {
-        // user.setProfilePicUrl(request.profilePicUrl());
-        // }
-        //
-        // if (user.getRole() == Role.MERCHANT && user instanceof Merchant merchant
-        // && request.about() != null) {
-        // merchant.setAbout(request.about());
-        // }
-        //
-        // userRepository.save(user);
+        boolean keycloakUpdateNeeded = false;
+        String newFirstName = null;
+        String newLastName = null;
+
+        if (request.firstName() != null) {
+            newFirstName = request.firstName();
+            keycloakUpdateNeeded = true;
+        }
+
+        if (request.lastName() != null) {
+            newLastName = request.lastName();
+            keycloakUpdateNeeded = true;
+        }
+
+        if (keycloakUpdateNeeded) {
+            keycloakAdminService.updateUser(user.getKeycloakId(), newFirstName, newLastName);
+        }
+
+        if (request.birthDate() != null) {
+            user.setBirthDate(request.birthDate());
+        }
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public String updateProfilePicture(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new InvalidRequestException("File is empty");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new InvalidRequestException("Only image files are allowed");
+        }
+
+        if (file.getSize() > MAX_FILE_SIZE) {
+            throw new InvalidRequestException("File size exceeds maximum allowed size of 5MB");
+        }
+
+        User user = currentUserService.getCurrentUserEntity();
+
+        String oldProfilePic = user.getProfilePicUrl();
+        if (oldProfilePic != null && !oldProfilePic.isBlank()) {
+            try {
+                String publicId = extractCloudinaryPublicId(oldProfilePic);
+                if (publicId != null) {
+                    cloudinaryService.deleteImage(publicId);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        Map<?, ?> result = cloudinaryService.uploadImage(file);
+        String imageUrl = (String) result.get("url");
+        user.setProfilePicUrl(imageUrl);
+        userRepository.save(user);
+
+        return imageUrl;
+    }
+
+    private String extractCloudinaryPublicId(String imageUrl) {
+        try {
+            String withoutExtension = imageUrl.substring(0, imageUrl.lastIndexOf('.'));
+            return withoutExtension.substring(withoutExtension.lastIndexOf('/') + 1);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }

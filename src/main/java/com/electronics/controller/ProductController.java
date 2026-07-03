@@ -1,8 +1,10 @@
 package com.electronics.controller;
 
+import com.electronics.dto.MerchantResponse;
 import com.electronics.dto.PageResponse;
 import com.electronics.dto.ProductRequest;
 import com.electronics.dto.ProductResponse;
+import com.electronics.service.MerchantService;
 import com.electronics.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
+    private final MerchantService merchantService;
+
+    @GetMapping("/featured")
+    public PageResponse<ProductResponse> findFeatured(
+        @PageableDefault(size = 20) Pageable pageable) {
+        return productService.findFeatured(pageable);
+    }
 
     @GetMapping
     public PageResponse<ProductResponse> findAll(
@@ -45,9 +54,14 @@ public class ProductController {
         return productService.findById(id);
     }
 
+    @GetMapping("/merchant/{merchantId}")
+    public MerchantResponse findMerchantDetails(@PathVariable Integer merchantId) {
+        return merchantService.findById(merchantId);
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('MERCHANT')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
     public ProductResponse create(@Valid @RequestBody ProductRequest request) {
         return productService.create(request);
     }

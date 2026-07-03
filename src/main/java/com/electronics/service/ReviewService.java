@@ -2,6 +2,8 @@ package com.electronics.service;
 
 import com.electronics.dto.CreateReviewRequest;
 import com.electronics.dto.ReviewResponse;
+import com.electronics.dto.ReviewSummaryResponse;
+import com.electronics.dto.ReviewSummaryResponse.RatingBreakdownResponse;
 import com.electronics.dto.UpdateReviewRequest;
 import com.electronics.entity.Product;
 import com.electronics.entity.Review;
@@ -20,7 +22,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -64,10 +69,36 @@ public class ReviewService {
             .map(
                 r -> new ReviewResponse(
                     r.getId(),
+                    r.getUser().getKeycloakId(),
                     r.getReviewDisplayedName(), // TODO:UPDATE IT TO BE USERNAME
                     r.getProduct().getId(),
                     r.getRating(),
                     r.getComment()));
+    }
+
+    public ReviewSummaryResponse getProductReviewsSummary(Integer productId) {
+        productRepository.findByIdAndDeletedFalse(productId)
+            .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        Double average = reviewRepository.findAverageRatingByProductId(productId);
+        Long totalReviews = reviewRepository.countByProduct_Id(productId);
+        Map<Integer, Long> countsByStars = reviewRepository
+            .findRatingBreakdownByProductId(productId)
+            .stream()
+            .collect(
+                Collectors.toMap(
+                    row -> ((Number) row[0]).intValue(),
+                    row -> ((Number) row[1]).longValue()));
+
+        return new ReviewSummaryResponse(
+            average == null ? 0.0 : average,
+            totalReviews,
+            IntStream.rangeClosed(1, 5)
+                .mapToObj(
+                    stars -> new RatingBreakdownResponse(
+                        stars,
+                        countsByStars.getOrDefault(stars, 0L)))
+                .toList());
     }
 
     public void deleteReview(Integer productId) {
