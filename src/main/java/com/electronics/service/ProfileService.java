@@ -36,14 +36,15 @@ public class ProfileService {
         }
 
         return new ProfileResponse(
-            user.firstName(),
-            user.lastName(),
-            user.email(),
-            user.username(),
-            user.roles(),
-            user.birthDate(),
-            user.profilePicUrl(),
-            about);
+                user.id(),
+                user.firstName(),
+                user.lastName(),
+                user.email(),
+                user.username(),
+                user.roles(),
+                user.birthDate(),
+                user.profilePicUrl(),
+                about);
     }
 
     @Transactional
