@@ -1,6 +1,7 @@
 package com.electronics.service;
 
 import com.electronics.dto.MerchantResponse;
+import com.electronics.dto.MerchantSummaryResponse;
 import com.electronics.entity.Merchant;
 import com.electronics.exception.MerchantNotFoundException;
 import com.electronics.repository.MerchantRepository;
@@ -9,6 +10,8 @@ import com.electronics.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +31,23 @@ public class MerchantService {
 
         return new MerchantResponse(
             merchant.getId(),
-            merchant.getEmail(),
+            merchant.getBusinessName(),
             merchant.getProfilePicUrl(),
             rating,
             totalProducts,
-            merchant.getCreatedAt());
+            merchant.getCreatedAt()
+        );
+    }
+
+    public List<MerchantSummaryResponse> findAllSummary() {
+        return merchantRepository.findAll().stream()
+            .map(m -> new MerchantSummaryResponse(
+                m.getId(),
+                m.getBusinessName(),
+                m.getBusinessName(),
+                m.getEmail(),
+                m.getBusinessName()
+            ))
+            .toList();
     }
 }

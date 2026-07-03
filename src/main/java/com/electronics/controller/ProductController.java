@@ -54,14 +54,14 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    @GetMapping("merchant/{merchantId}")
+    @GetMapping("/merchant/{merchantId}")
     public MerchantResponse findMerchantDetails(@PathVariable Integer merchantId) {
         return merchantService.findById(merchantId);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
     public ProductResponse create(@Valid @RequestBody ProductRequest request) {
         return productService.create(request);
     }

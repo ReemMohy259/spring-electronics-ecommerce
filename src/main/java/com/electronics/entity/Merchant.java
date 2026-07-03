@@ -12,4 +12,7 @@ public class Merchant extends User {
 
     @Column(name = "about", length = Integer.MAX_VALUE)
     private String about;
+
+    @Column(name = "business_name")
+    private String businessName;
 }
