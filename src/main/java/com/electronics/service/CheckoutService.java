@@ -205,7 +205,7 @@ public class CheckoutService {
         Order order = new Order();
         order.setUser(customer);
         order.setTotalPrice(payment.getAmount());
-        order.setStatus("CONFIRMED");
+        order.setStatus(OrderStatus.PAID);
         order.setTimestamp(OffsetDateTime.now());
         orderRepository.save(order);
 
