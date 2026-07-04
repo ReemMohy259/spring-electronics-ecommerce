@@ -24,9 +24,7 @@ public class OrderController {
 
     @GetMapping("/me")
     public ResponseEntity<Page<OrderResponse>> getMyOrders(
-        @PageableDefault(size = 20, sort = "timestamp", direction = Sort.Direction.DESC)
-        Pageable pageable
-    ) {
+        @PageableDefault(size = 20, sort = "timestamp", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(orderService.getMyOrders(pageable));
     }
 

@@ -24,12 +24,16 @@ import java.util.Set;
 public class OrderService {
 
     private static final Map<OrderStatus, Set<OrderStatus>> ALLOWED_TRANSITIONS = Map.of(
-        OrderStatus.PENDING, Set.of(OrderStatus.PAID, OrderStatus.CANCELLED),
-        OrderStatus.PAID, Set.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED),
-        OrderStatus.SHIPPED, Set.of(OrderStatus.DELIVERED),
-        OrderStatus.DELIVERED, Set.of(),
-        OrderStatus.CANCELLED, Set.of()
-    );
+        OrderStatus.PENDING,
+        Set.of(OrderStatus.PAID, OrderStatus.CANCELLED),
+        OrderStatus.PAID,
+        Set.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED),
+        OrderStatus.SHIPPED,
+        Set.of(OrderStatus.DELIVERED),
+        OrderStatus.DELIVERED,
+        Set.of(),
+        OrderStatus.CANCELLED,
+        Set.of());
 
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
@@ -93,7 +97,8 @@ public class OrderService {
     }
 
     private OrderResponse toResponse(Order order) {
-        List<OrderItemResponse> items = order.getOrderItems().stream()
+        List<OrderItemResponse> items = order.getOrderItems()
+            .stream()
             .map(this::toItemResponse)
             .toList();
 
@@ -111,7 +116,8 @@ public class OrderService {
     }
 
     private OrderItemResponse toItemResponse(OrderItem item) {
-        BigDecimal subtotal = item.getCurrentPrice().multiply(BigDecimal.valueOf(item.getQuantity()));
+        BigDecimal subtotal = item.getCurrentPrice()
+            .multiply(BigDecimal.valueOf(item.getQuantity()));
         return new OrderItemResponse(
             item.getId(),
             item.getProduct().getId(),

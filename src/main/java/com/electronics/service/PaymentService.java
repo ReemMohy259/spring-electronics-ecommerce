@@ -20,16 +20,14 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Page<PaymentResponse> getMyPayments(Pageable pageable) {
         Customer customer = getCurrentCustomer();
-        return paymentRepository.findByCustomerId(customer.getId(), pageable)
-            .map(this::toResponse);
+        return paymentRepository.findByCustomerId(customer.getId(), pageable).map(this::toResponse);
     }
 
     @Transactional(readOnly = true)
     public PaymentResponse getMyPaymentById(Integer paymentId) {
         Customer customer = getCurrentCustomer();
         Payment payment = paymentRepository.findByIdAndCustomerId(paymentId, customer.getId())
-            .orElseThrow(() -> new PaymentNotFoundException(
-                "Payment not found: " + paymentId));
+            .orElseThrow(() -> new PaymentNotFoundException("Payment not found: " + paymentId));
         return toResponse(payment);
     }
 
@@ -41,8 +39,7 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public PaymentResponse getPaymentByIdAdmin(Integer paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
-            .orElseThrow(() -> new PaymentNotFoundException(
-                "Payment not found: " + paymentId));
+            .orElseThrow(() -> new PaymentNotFoundException("Payment not found: " + paymentId));
         return toResponse(payment);
     }
 
@@ -62,7 +59,6 @@ public class PaymentService {
             payment.getCurrency(),
             payment.getStatus(),
             payment.getCreatedAt(),
-            payment.getUpdatedAt())
-        ;
+            payment.getUpdatedAt());
     }
 }
