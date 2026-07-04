@@ -13,7 +13,9 @@ public record UpdateProfileRequest(
 
     @Past(message = "Birth date must be in the past") LocalDate birthDate,
 
-    @Size(max = 5000, message = "About section cannot exceed 5000 characters") String about
+    @Size(max = 5000, message = "About section cannot exceed 5000 characters") String about,
+
+    @Size(max = 255, message = "Business name cannot exceed 255 characters") String businessName
 
 ) {
 }

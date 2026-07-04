@@ -35,10 +35,13 @@ public class ProfileService {
         CurrentUser user = currentUserDataUtil.getCurrentUser();
 
         String about = null;
+        String businessName = null;
         if (user.roles().contains(Role.MERCHANT)) {
             Optional<Merchant> m = merchantRepository.findByEmail(user.email());
-            if (m.isPresent())
+            if (m.isPresent()) {
                 about = m.get().getAbout();
+                businessName = m.get().getBusinessName();
+            }
         }
 
         return new ProfileResponse(
@@ -50,7 +53,8 @@ public class ProfileService {
             user.roles(),
             user.birthDate(),
             user.profilePicUrl(),
-            about);
+            about,
+            businessName);
     }
 
     @Transactional
@@ -79,7 +83,17 @@ public class ProfileService {
             user.setBirthDate(request.birthDate());
         }
 
-        userRepository.save(user);
+        if (user instanceof Merchant merchant) {
+            if (request.about() != null) {
+                merchant.setAbout(request.about());
+            }
+            if (request.businessName() != null) {
+                merchant.setBusinessName(request.businessName());
+            }
+            merchantRepository.save(merchant);
+        } else {
+            userRepository.save(user);
+        }
     }
 
     @Transactional
