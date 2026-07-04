@@ -1,5 +1,6 @@
 package com.electronics.repository;
 
+import com.electronics.entity.Customer;
 import com.electronics.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
 
@@ -36,5 +38,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
         """)
     long countByMerchantKeycloakId(@Param("keycloakId") String keycloakId);
 
-    Page<Order> findByUserId(Integer userId, Pageable pageable);
+    Page<Order> findByCustomer(Customer user, Pageable pageable);
+
+    Optional<Order> findByIdAndCustomer(Integer id, Customer user);
 }

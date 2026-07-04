@@ -29,14 +29,13 @@ public class Order {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "customer_id", nullable = false)
-    private Customer user;
+    private Customer customer;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalPrice;
 
-    @Size(max = 50)
     @NotNull
     @Column(name = "status", nullable = false, length = 50)
     private OrderStatus status;

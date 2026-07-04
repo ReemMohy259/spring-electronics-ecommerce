@@ -203,7 +203,7 @@ public class CheckoutService {
 
         // 8. Create Order
         Order order = new Order();
-        order.setUser(customer);
+        order.setCustomer(customer);
         order.setTotalPrice(payment.getAmount());
         order.setStatus(OrderStatus.PAID);
         order.setTimestamp(OffsetDateTime.now());
