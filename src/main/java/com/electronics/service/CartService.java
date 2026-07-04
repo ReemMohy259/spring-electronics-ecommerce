@@ -49,10 +49,10 @@ public class CartService {
         this.customerUtil = customerUtil;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CartResponse getCart(Integer customerId) {
         Customer customer = customerUtil.findCustomerOrThrow(customerId);
-        Cart cart = cartUtil.findCartOrThrow(customer);
+        Cart cart = cartUtil.findOrCreateCart(customer);
         return CartResponse.fromEntity(cart);
     }
 
