@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/v1/chat")
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -20,7 +20,7 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponse> chat(@Valid @RequestBody ChatRequest request) {
-        ChatResponse response = chatService.chat(request);
-        return ResponseEntity.ok(response);
+         ChatResponse response = chatService.chat(request);
+         return ResponseEntity.ok(response);
     }
 }

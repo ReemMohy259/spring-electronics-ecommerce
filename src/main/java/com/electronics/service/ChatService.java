@@ -4,6 +4,8 @@ import com.electronics.dto.chat.ChatRequest;
 import com.electronics.dto.chat.ChatResponse;
 import com.electronics.dto.chat.ContentBlock;
 import com.electronics.dto.chat.ProductCard;
+import com.electronics.exception.AiServiceUnavailableException;
+import com.google.genai.errors.ClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -12,7 +14,11 @@ import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -85,18 +91,23 @@ public class ChatService {
         // 3. Build augmented user message with RAG context
         String augmentedMessage = buildAugmentedMessage(userMessage, productContext);
 
-        // 4. Call LLM with conversation history
-        String llmOutput = chatClientBuilder.build()
-            .prompt()
-            .system(SYSTEM_PROMPT)
-            .user(augmentedMessage)
-            .advisors(
-                MessageChatMemoryAdvisor.builder(chatMemory)
-                    .build()
-            )
-            .advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, sessionId))
-            .call()
-            .content();
+        String llmOutput;
+        try {
+            // 4. Call LLM with conversation history
+             llmOutput = chatClientBuilder.build()
+                .prompt()
+                .system(SYSTEM_PROMPT)
+                .user(augmentedMessage)
+                .advisors(
+                    MessageChatMemoryAdvisor.builder(chatMemory)
+                        .build()
+                )
+                .advisors(advisors -> advisors.param(ChatMemory.CONVERSATION_ID, sessionId))
+                .call()
+                .content();
+        } catch (RuntimeException e) {
+            throw translateAiFailure(e);
+        }
 
         // 5. Parse LLM output and assemble typed blocks
         List<ContentBlock> blocks = blockAssembler.assemble(llmOutput, products);
@@ -121,5 +132,39 @@ public class ChatService {
             
             Use the above context to answer the question. Only reference products listed above.
             """.formatted(userMessage, productContext);
+    }
+
+    private RuntimeException translateAiFailure(RuntimeException ex) {
+        Throwable cause = ex;
+        while (cause.getCause() != null) {
+            cause = cause.getCause();
+        }
+
+        if (cause instanceof ClientException clientEx && isQuotaExceeded(clientEx)) {
+            Map<String, Object> info = new LinkedHashMap<>();
+            extractRetryDelaySeconds(clientEx.getMessage()).ifPresent(s -> info.put("retryAfterSeconds", s));
+
+            return new AiServiceUnavailableException(
+                "The shopping assistant is temporarily unavailable. Please try again shortly.",
+                info
+            );
+        }
+
+        // Unknown failure — don't leak internals, but don't swallow it as "rate limited" either
+        return new AiServiceUnavailableException(
+            "The shopping assistant couldn't process your request. Please try again.",
+            Map.of()
+        );
+    }
+
+    private boolean isQuotaExceeded(ClientException ex) {
+        String msg = ex.getMessage();
+        return msg != null && (msg.contains("429") || msg.contains("RESOURCE_EXHAUSTED") || msg.contains("quota"));
+    }
+
+    private java.util.Optional<Integer> extractRetryDelaySeconds(String message) {
+        if (message == null) return java.util.Optional.empty();
+        Matcher m = Pattern.compile("retryDelay\":\"(\\d+)s\"").matcher(message);
+        return m.find() ? java.util.Optional.of(Integer.parseInt(m.group(1))) : java.util.Optional.empty();
     }
 }
