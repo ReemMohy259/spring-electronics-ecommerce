@@ -16,6 +16,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class CurrentUserProvisioningFilter extends OncePerRequestFilter {
 
+    private static final Object lock = new Object();
     private final CurrentUserService currentUserService;
 
     @Override
@@ -28,7 +29,9 @@ public class CurrentUserProvisioningFilter extends OncePerRequestFilter {
 
         if (authentication != null && authentication.isAuthenticated()
             && authentication.getPrincipal() instanceof Jwt) {
-            currentUserService.ensureCurrentUserExists();
+            synchronized (lock) {
+                currentUserService.ensureCurrentUserExists();
+            }
         }
 
         filterChain.doFilter(request, response);
