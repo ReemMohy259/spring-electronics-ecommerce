@@ -50,6 +50,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MerchantRepository merchantRepository;
+    private final ProductIngestionService ingestionService;
     private final CurrentUserService currentUserService;
 
     @Transactional(readOnly = true)
@@ -89,7 +90,9 @@ public class ProductService {
         Product product = new Product();
         Merchant merchant = resolveMerchant(request.merchantId());
         applyRequest(product, request, null, merchant);
-        return ProductResponse.from(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        ingestionService.indexProduct(saved);
+        return ProductResponse.from(saved);
     }
 
     @Transactional
@@ -102,14 +105,16 @@ public class ProductService {
                 "Merchants cannot transfer products to another merchant");
         }
         applyRequest(product, request, id, merchant);
-        return ProductResponse.from(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        ingestionService.indexProduct(saved);
+        return ProductResponse.from(saved);
     }
 
     @Transactional
     public void softDelete(Integer id) {
         Product product = getManageableProduct(id);
-        product.setDeleted(true);
-        productRepository.save(product);
+        Product saved = productRepository.save(product);
+        ingestionService.removeFromIndex(saved.getId());
     }
 
     private Product getActiveProduct(Integer id) {

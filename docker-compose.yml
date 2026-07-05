@@ -36,5 +36,15 @@ services:
       interval: 10s
       retries: 10
 
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
 volumes:
   kc-pgdata:
+  qdrant_data:

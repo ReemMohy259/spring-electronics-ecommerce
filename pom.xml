@@ -68,7 +68,21 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-ollama</artifactId>
+            <artifactId>spring-ai-starter-model-google-genai</artifactId>
+        </dependency>
+        <!-- Embedding — separate starter, must be added explicitly -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-google-genai-embedding</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-vector-store-qdrant</artifactId>
+        </dependency>
+        <!-- Spring AI — JDBC Chat Memory (persistent conversation history) -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-chat-memory-repository-jdbc</artifactId>
         </dependency>
         <dependency>
             <groupId>com.stripe</groupId>
@@ -128,6 +142,15 @@
             <groupId>com.cloudinary</groupId>
             <artifactId>cloudinary-http44</artifactId>
             <version>1.39.0</version>
+        </dependency>
+        <!--
+            Jackson 3 ships with Spring Boot 4 / Spring AI 2.
+            Group ID changed: com.fasterxml.jackson → tools.jackson
+            Spring Boot's BOM manages the version — no explicit version needed.
+        -->
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
     </dependencies>
 
