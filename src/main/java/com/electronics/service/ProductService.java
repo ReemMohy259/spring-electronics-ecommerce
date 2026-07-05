@@ -16,6 +16,7 @@ import com.electronics.repository.MerchantRepository;
 import com.electronics.repository.ProductRepository;
 import com.electronics.repository.ProductSpecifications;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +52,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final MerchantRepository merchantRepository;
     private final CurrentUserService currentUserService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(
@@ -89,7 +91,9 @@ public class ProductService {
         Product product = new Product();
         Merchant merchant = resolveMerchant(request.merchantId());
         applyRequest(product, request, null, merchant);
-        return ProductResponse.from(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        eventPublisher.publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+        return ProductResponse.from(saved);
     }
 
     @Transactional
@@ -102,7 +106,9 @@ public class ProductService {
                 "Merchants cannot transfer products to another merchant");
         }
         applyRequest(product, request, id, merchant);
-        return ProductResponse.from(productRepository.save(product));
+        Product saved = productRepository.save(product);
+        eventPublisher.publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+        return ProductResponse.from(saved);
     }
 
     @Transactional
@@ -110,6 +116,7 @@ public class ProductService {
         Product product = getManageableProduct(id);
         product.setDeleted(true);
         productRepository.save(product);
+        eventPublisher.publishEvent(new ProductIndexEvent(id, ProductIndexEvent.Action.REMOVE));
     }
 
     private Product getActiveProduct(Integer id) {

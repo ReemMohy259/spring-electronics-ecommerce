@@ -1,12 +1,32 @@
 services:
 
+  elasticsearch:
+    image: elasticsearch:9.4.2
+    container_name: elasticsearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     container_name: keycloak_server
     restart: unless-stopped
+    depends_on:
+      elasticsearch:
+        condition: service_started
     command: start-dev
     ports:
       - "8081:8080"
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+
+volumes:
+  es_data:
