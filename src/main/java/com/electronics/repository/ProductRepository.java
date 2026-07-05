@@ -1,12 +1,11 @@
 package com.electronics.repository;
 
 import com.electronics.entity.Product;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,4 +49,29 @@ public interface ProductRepository
             ORDER BY (SELECT COALESCE(AVG(r.rating), 0) FROM Review r WHERE r.product.id = p.id) DESC
         """)
     Page<Product> findFeatured(Pageable pageable);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Product p WHERE p.id = :id")
+    Optional<Product> findByIdForUpdate(Integer id);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Product p WHERE p.id IN :ids")
+    List<Product> findAllByIdForUpdate(List<Integer> ids);
+
+    @Query("""
+        SELECT p FROM Product p
+        LEFT JOIN FETCH p.categories
+        JOIN FETCH p.merchant
+        WHERE p.id IN :ids
+          AND p.deleted = false
+        """)
+    List<Product> findActiveByIdIn(@Param("ids") List<Integer> ids);
+
+    @Query("""
+        SELECT p FROM Product p
+        LEFT JOIN FETCH p.categories
+        JOIN FETCH p.merchant
+        WHERE p.deleted = false
+        """)
+    List<Product> findAllActive();
 }

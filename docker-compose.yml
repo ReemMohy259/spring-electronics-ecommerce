@@ -1,12 +1,50 @@
+
 services:
 
+  postgres-keycloak:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+    volumes:
+      - kc-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 5s
+      retries: 10
+
   keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: keycloak_server
-    restart: unless-stopped
-    command: start-dev
+    build:
+      context: .
+      dockerfile: keycloak/Dockerfile
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
+      KEYCLOAK_ADMIN: ${KC_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+    depends_on:
+      postgres-keycloak:
+        condition: service_healthy
     ports:
       - "8081:8080"
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      - "9000:9000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/health/ready" ]
+      interval: 10s
+      retries: 10
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+
+volumes:
+  kc-pgdata:
+  qdrant_data:

@@ -19,7 +19,7 @@ public class Customer extends User {
     @OneToOne(mappedBy = "customer")
     private Cart cart;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "customer")
     private Set<Order> orders = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user")

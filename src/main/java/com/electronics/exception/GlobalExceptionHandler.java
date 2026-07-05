@@ -80,6 +80,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(Exception e) {
+        e.printStackTrace();
         return buildErrorResponse(
             e.getMessage(),
             HttpStatus.INTERNAL_SERVER_ERROR.value(),

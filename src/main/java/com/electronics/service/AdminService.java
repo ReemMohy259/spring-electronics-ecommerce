@@ -3,6 +3,7 @@ package com.electronics.service;
 import com.electronics.entity.Customer;
 import com.electronics.entity.Merchant;
 import com.electronics.entity.Order;
+import com.electronics.entity.OrderStatus;
 import com.electronics.exception.CustomerNotFoundException;
 import com.electronics.exception.InvalidRequestException;
 import com.electronics.exception.MerchantNotFoundException;
@@ -44,10 +45,10 @@ public class AdminService {
     public void cancelOrder(Integer id) {
         Order order = orderRepository.findById(id)
             .orElseThrow(() -> new OrderNotFoundException(id));
-        if ("CANCELLED".equalsIgnoreCase(order.getStatus())) {
+        if (OrderStatus.CANCELLED == order.getStatus()) {
             throw new InvalidRequestException("Order is already cancelled", Map.of("id", id));
         }
-        order.setStatus("CANCELLED");
+        order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }
 }

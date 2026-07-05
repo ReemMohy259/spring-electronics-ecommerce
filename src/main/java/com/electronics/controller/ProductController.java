@@ -54,7 +54,7 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    @GetMapping("/merchant/{merchantId}")
+    @GetMapping("/merchants/{merchantId}")
     public MerchantResponse findMerchantDetails(@PathVariable Integer merchantId) {
         return merchantService.findById(merchantId);
     }
