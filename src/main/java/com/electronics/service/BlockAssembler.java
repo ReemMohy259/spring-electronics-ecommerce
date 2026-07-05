@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Parses the raw LLM JSON output and assembles final ContentBlock list.
- * The LLM decides ordering and text; we inject real product data.
+ * Parses the raw LLM JSON output and assembles final ContentBlock list. The LLM
+ * decides ordering and text; we inject real product data.
  */
 @Slf4j
 @Component
@@ -26,8 +26,10 @@ public class BlockAssembler {
     private final ObjectMapper objectMapper;
 
     /**
-     * @param llmRawOutput  The JSON string the LLM returned
-     * @param products      Hydrated products from the DB (ordered by relevance)
+     * @param llmRawOutput
+     *            The JSON string the LLM returned
+     * @param products
+     *            Hydrated products from the DB (ordered by relevance)
      */
     public List<ContentBlock> assemble(String llmRawOutput, List<ProductCard> products) {
         List<ContentBlock> blocks = new ArrayList<>();
@@ -36,9 +38,9 @@ public class BlockAssembler {
             // Strip markdown code fences if the model wrapped them
             String json = stripCodeFences(llmRawOutput);
 
-            List<Map<String, Object>> rawBlocks = objectMapper.readValue(
-                json, new TypeReference<>() {}
-            );
+            List<Map<String, Object>> rawBlocks = objectMapper
+                .readValue(json, new TypeReference<>() {
+                });
 
             for (Map<String, Object> raw : rawBlocks) {
                 String type = (String) raw.get("type");
@@ -71,8 +73,6 @@ public class BlockAssembler {
     }
 
     private String stripCodeFences(String raw) {
-        return raw.replaceAll("(?s)```json\\s*", "")
-            .replaceAll("(?s)```\\s*", "")
-            .trim();
+        return raw.replaceAll("(?s)```json\\s*", "").replaceAll("(?s)```\\s*", "").trim();
     }
 }

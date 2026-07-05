@@ -20,7 +20,7 @@ public class ChatController {
 
     @PostMapping
     public ResponseEntity<ChatResponse> chat(@Valid @RequestBody ChatRequest request) {
-         ChatResponse response = chatService.chat(request);
-         return ResponseEntity.ok(response);
+        ChatResponse response = chatService.chat(request);
+        return ResponseEntity.ok(response);
     }
 }

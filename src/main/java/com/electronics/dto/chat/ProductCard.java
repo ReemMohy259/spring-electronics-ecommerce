@@ -15,9 +15,9 @@ public class ProductCard {
     private BigDecimal price;
     private String imageUrl;
     private String sku;
-    private Set<String> categories;   // Derived from product.getCategories()
-    private String merchantName;      // Derived from product.getMerchant()
-    private boolean inStock;          // Derived: stockQuantity > 0
+    private Set<String> categories; // Derived from product.getCategories()
+    private String merchantName; // Derived from product.getMerchant()
+    private boolean inStock; // Derived: stockQuantity > 0
     private Integer stockQuantity;
     private String actionUrl;
     private String additionalInfo;

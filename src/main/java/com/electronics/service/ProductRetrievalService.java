@@ -39,8 +39,7 @@ public class ProductRetrievalService {
                 .query(query)
                 .topK(maxRagResults)
                 .similarityThreshold(0.65)
-                .build()
-        );
+                .build());
 
         if (docs.isEmpty()) {
             log.info("No vector results for query: {}", query);
@@ -48,24 +47,20 @@ public class ProductRetrievalService {
         }
 
         // 2. Extract Integer product IDs from document metadata
-        List<Integer> productIds = docs.stream()
-            .map(doc -> {
-                Object raw = doc.getMetadata().get("productId");
-                if (raw == null) return null;
-                // Metadata values are stored as String in PgVector
-                return Integer.parseInt(raw.toString());
-            })
-            .filter(Objects::nonNull)
-            .distinct()
-            .limit(maxProductResults)
-            .toList();
+        List<Integer> productIds = docs.stream().map(doc -> {
+            Object raw = doc.getMetadata().get("productId");
+            if (raw == null)
+                return null;
+            // Metadata values are stored as String in PgVector
+            return Integer.parseInt(raw.toString());
+        }).filter(Objects::nonNull).distinct().limit(maxProductResults).toList();
 
         if (productIds.isEmpty()) {
             return List.of();
         }
 
         // 3. Fetch from DB — categories and merchant are JOIN FETCHed,
-        //    so no lazy-loading issues when mapping to card
+        // so no lazy-loading issues when mapping to card
         List<Product> products = productRepository.findActiveByIdIn(productIds);
 
         // 4. Preserve the vector search ranking order
@@ -80,21 +75,29 @@ public class ProductRetrievalService {
     }
 
     public String buildProductContext(List<ProductCard> products) {
-        if (products.isEmpty()) return "";
+        if (products.isEmpty())
+            return "";
 
         StringBuilder sb = new StringBuilder("Relevant products found in catalog:\n\n");
         for (int i = 0; i < products.size(); i++) {
             ProductCard p = products.get(i);
-            sb.append(i + 1).append(". ")
+            sb.append(i + 1)
+                .append(". ")
                 .append(p.getName())
-                .append(" — $").append(p.getPrice())
-                .append(" | SKU: ").append(p.getSku() != null ? p.getSku() : "N/A")
-                .append(" | Categories: ").append(String.join(", ", p.getCategories()))
-                .append(" | Merchant: ").append(p.getMerchantName())
-                .append(" | ").append(p.isInStock()
-                    ? "In Stock (" + p.getStockQuantity() + " units)"
-                    : "Out of Stock")
-                .append("\n   ").append(p.getDescription())
+                .append(" — $")
+                .append(p.getPrice())
+                .append(" | SKU: ")
+                .append(p.getSku() != null ? p.getSku() : "N/A")
+                .append(" | Categories: ")
+                .append(String.join(", ", p.getCategories()))
+                .append(" | Merchant: ")
+                .append(p.getMerchantName())
+                .append(" | ")
+                .append(
+                    p.isInStock() ? "In Stock (" + p.getStockQuantity() + " units)"
+                        : "Out of Stock")
+                .append("\n   ")
+                .append(p.getDescription())
                 .append("\n\n");
         }
         return sb.toString();
@@ -109,10 +112,7 @@ public class ProductRetrievalService {
             .imageUrl(p.getImageUrl())
             .sku(p.getSku())
             .categories(
-                p.getCategories().stream()
-                    .map(Category::getName)
-                    .collect(Collectors.toSet())
-            )
+                p.getCategories().stream().map(Category::getName).collect(Collectors.toSet()))
             .merchantName(p.getMerchant().getEmail())
             .inStock(p.getStockQuantity() > 0)
             .stockQuantity(p.getStockQuantity())
