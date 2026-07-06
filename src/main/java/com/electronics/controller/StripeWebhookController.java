@@ -21,8 +21,7 @@ public class StripeWebhookController {
     @PostMapping("/webhook")
     public ResponseEntity<String> handleWebhook(
         @RequestBody String payload,
-        @RequestHeader(STRIPE_HEADER) String signature
-    ) {
+        @RequestHeader(STRIPE_HEADER) String signature) {
         Event event;
         try {
             event = Webhook.constructEvent(payload, signature, webhookSecret);
@@ -33,8 +32,8 @@ public class StripeWebhookController {
         }
 
         // switch (event.getType()) {
-        //     case "payment_intent.succeeded" -> System.out.println("Payment succeeded");
-        //    case "payment_intent.payment_failed" -> System.out.println("Payment failed");
+        // case "payment_intent.succeeded" -> System.out.println("Payment succeeded");
+        // case "payment_intent.payment_failed" -> System.out.println("Payment failed");
         // }
 
         return ResponseEntity.ok("Received");

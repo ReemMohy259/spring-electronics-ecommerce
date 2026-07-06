@@ -5,12 +5,8 @@ import org.springframework.ai.model.openai.autoconfigure.OpenAiEmbeddingAutoConf
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(
-    exclude = {
-        OpenAiEmbeddingAutoConfiguration.class,
-        OllamaChatAutoConfiguration.class
-    }
-)
+@SpringBootApplication(exclude = {OpenAiEmbeddingAutoConfiguration.class,
+        OllamaChatAutoConfiguration.class})
 public class ElectronicsEcommerceApplication {
 
     public static void main(String[] args) {

@@ -61,11 +61,8 @@ public class KeycloakAdminService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        ResponseEntity<List> response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            new HttpEntity<>(headers),
-            List.class);
+        ResponseEntity<List> response = restTemplate
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(headers), List.class);
         List<Map<String, Object>> users = response.getBody();
         return users == null ? List.of() : users;
     }

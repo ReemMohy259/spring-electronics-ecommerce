@@ -35,10 +35,14 @@ public class AdminService {
     public AdminDashboardStatsResponse getDashboardStats() {
         Set<String> adminIds = adminKeycloakIds();
         return new AdminDashboardStatsResponse(
-            customerRepository.findAllByDeletedFalseOrderByCreatedAtDesc().stream()
-                .filter(user -> !adminIds.contains(user.getKeycloakId())).count(),
-            merchantRepository.findAllByDeletedFalseOrderByCreatedAtDesc().stream()
-                .filter(user -> !adminIds.contains(user.getKeycloakId())).count(),
+            customerRepository.findAllByDeletedFalseOrderByCreatedAtDesc()
+                .stream()
+                .filter(user -> !adminIds.contains(user.getKeycloakId()))
+                .count(),
+            merchantRepository.findAllByDeletedFalseOrderByCreatedAtDesc()
+                .stream()
+                .filter(user -> !adminIds.contains(user.getKeycloakId()))
+                .count(),
             adminIds.size());
     }
 
@@ -46,28 +50,46 @@ public class AdminService {
     public List<AdminUserResponse> getUsers(String role) {
         Set<String> adminIds = adminKeycloakIds();
         return switch (role.toUpperCase()) {
-            case "CUSTOMER" -> customerRepository.findAllByDeletedFalseOrderByCreatedAtDesc().stream()
+            case "CUSTOMER" -> customerRepository.findAllByDeletedFalseOrderByCreatedAtDesc()
+                .stream()
                 .filter(user -> !adminIds.contains(user.getKeycloakId()))
-                .map(user -> new AdminUserResponse(user.getId().toString(), user.getEmail(),
-                    user.getEmail(), "CUSTOMER", user.getCreatedAt()))
+                .map(
+                    user -> new AdminUserResponse(
+                        user.getId().toString(),
+                        user.getEmail(),
+                        user.getEmail(),
+                        "CUSTOMER",
+                        user.getCreatedAt()))
                 .toList();
-            case "MERCHANT" -> merchantRepository.findAllByDeletedFalseOrderByCreatedAtDesc().stream()
+            case "MERCHANT" -> merchantRepository.findAllByDeletedFalseOrderByCreatedAtDesc()
+                .stream()
                 .filter(user -> !adminIds.contains(user.getKeycloakId()))
-                .map(user -> new AdminUserResponse(user.getId().toString(), user.getEmail(),
-                    user.getBusinessName() == null ? user.getEmail() : user.getBusinessName(),
-                    "MERCHANT", user.getCreatedAt()))
+                .map(
+                    user -> new AdminUserResponse(
+                        user.getId().toString(),
+                        user.getEmail(),
+                        user.getBusinessName() == null ? user.getEmail() : user.getBusinessName(),
+                        "MERCHANT",
+                        user.getCreatedAt()))
                 .toList();
-            case "ADMIN" -> keycloakAdminService.getUsersWithRealmRole("ADMIN").stream()
-                .map(user -> new AdminUserResponse(String.valueOf(user.get("id")),
-                    String.valueOf(user.getOrDefault("email", "")), adminName(user),
-                    "ADMIN", null))
+            case "ADMIN" -> keycloakAdminService.getUsersWithRealmRole("ADMIN")
+                .stream()
+                .map(
+                    user -> new AdminUserResponse(
+                        String.valueOf(user.get("id")),
+                        String.valueOf(user.getOrDefault("email", "")),
+                        adminName(user),
+                        "ADMIN",
+                        null))
                 .toList();
-            default -> throw new InvalidRequestException("Unsupported user role", Map.of("role", role));
+            default ->
+                throw new InvalidRequestException("Unsupported user role", Map.of("role", role));
         };
     }
 
     private Set<String> adminKeycloakIds() {
-        return keycloakAdminService.getUsersWithRealmRole("ADMIN").stream()
+        return keycloakAdminService.getUsersWithRealmRole("ADMIN")
+            .stream()
             .map(user -> String.valueOf(user.get("id")))
             .collect(Collectors.toSet());
     }
@@ -76,7 +98,8 @@ public class AdminService {
         String firstName = String.valueOf(user.getOrDefault("firstName", ""));
         String lastName = String.valueOf(user.getOrDefault("lastName", ""));
         String name = (firstName + " " + lastName).trim();
-        return name.isEmpty() ? String.valueOf(user.getOrDefault("username", "Administrator")) : name;
+        return name.isEmpty() ? String.valueOf(user.getOrDefault("username", "Administrator"))
+            : name;
     }
 
     @Transactional
