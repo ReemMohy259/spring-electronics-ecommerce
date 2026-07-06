@@ -38,8 +38,7 @@ public class ProductIndexService {
         productRepository.findByIdAndDeletedFalse(productId)
             .ifPresentOrElse(
                 this::indexProduct,
-                () -> log.warn("Product {} not found or deleted, skipping index", productId)
-            );
+                () -> log.warn("Product {} not found or deleted, skipping index", productId));
     }
 
     @Transactional(readOnly = true)
@@ -58,32 +57,36 @@ public class ProductIndexService {
             elasticsearchOperations.delete(String.valueOf(productId), ProductDocument.class);
             log.debug("Removed product {} from Elasticsearch", productId);
         } catch (Exception e) {
-            log.error("Failed to remove product {} from Elasticsearch: {}", productId, e.getMessage());
+            log.error(
+                "Failed to remove product {} from Elasticsearch: {}",
+                productId,
+                e.getMessage());
         }
     }
 
     @Transactional(readOnly = true)
     public void reindexAll() {
         ensureIndexExists();
-        List<Product> products = productRepository.findAll().stream()
+        List<Product> products = productRepository.findAll()
+            .stream()
             .filter(p -> !Boolean.TRUE.equals(p.getDeleted()))
             .toList();
         if (products.isEmpty()) {
             log.info("No active products to index");
             return;
         }
-        List<ProductDocument> documents = products.stream()
-            .map(this::mapToDocument)
-            .toList();
+        List<ProductDocument> documents = products.stream().map(this::mapToDocument).toList();
         elasticsearchOperations.save(documents);
         log.info("Reindexed {} products into Elasticsearch", documents.size());
     }
 
     private ProductDocument mapToDocument(Product product) {
         Double avgRating = reviewRepository.findAverageRatingByProductId(product.getId());
-        if (avgRating == null) avgRating = 0.0;
+        if (avgRating == null)
+            avgRating = 0.0;
 
-        List<String> categoryNames = product.getCategories().stream()
+        List<String> categoryNames = product.getCategories()
+            .stream()
             .map(c -> c.getName())
             .toList();
 

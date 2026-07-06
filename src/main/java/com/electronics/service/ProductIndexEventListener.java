@@ -15,7 +15,10 @@ public class ProductIndexEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleProductIndexEvent(ProductIndexEvent event) {
-        log.debug("Handling index event: productId={}, action={}", event.productId(), event.action());
+        log.debug(
+            "Handling index event: productId={}, action={}",
+            event.productId(),
+            event.action());
         switch (event.action()) {
             case INDEX -> productIndexService.indexProduct(event.productId());
             case REMOVE -> productIndexService.removeProduct(event.productId());

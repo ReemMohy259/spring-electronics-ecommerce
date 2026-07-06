@@ -27,9 +27,11 @@ public class ProductSearchService {
 
     public ProductSearchResponse search(ProductSearchRequest request) {
         NativeQuery query = buildQuery(request);
-        SearchHits<ProductDocument> hits = elasticsearchOperations.search(query, ProductDocument.class);
+        SearchHits<ProductDocument> hits = elasticsearchOperations
+            .search(query, ProductDocument.class);
 
-        List<ProductDto> products = hits.getSearchHits().stream()
+        List<ProductDto> products = hits.getSearchHits()
+            .stream()
             .map(hit -> ProductDto.from(hit.getContent()))
             .toList();
 
@@ -43,10 +45,7 @@ public class ProductSearchService {
 
     public List<String> autocomplete(String query) {
         NativeQuery nativeQuery = NativeQuery.builder()
-            .withQuery(q -> q.matchPhrasePrefix(m -> m
-                .field("name")
-                .query(query)
-            ))
+            .withQuery(q -> q.matchPhrasePrefix(m -> m.field("name").query(query)))
             .withMaxResults(10)
             .build();
 
@@ -62,22 +61,20 @@ public class ProductSearchService {
         BoolQuery.Builder bool = new BoolQuery.Builder();
 
         if (request.getQuery() != null && !request.getQuery().isBlank()) {
-            bool.must(m -> m.multiMatch(mm -> mm
-                .query(request.getQuery())
-                .fields("name^3", "description")
-                .fuzziness("AUTO")
-            ));
+            bool.must(
+                m -> m.multiMatch(
+                    mm -> mm.query(request.getQuery())
+                        .fields("name^3", "description")
+                        .fuzziness("AUTO")));
         }
 
         if (request.getCategories() != null && !request.getCategories().isEmpty()) {
-            bool.filter(f -> f.terms(t -> t
-                .field("categories")
-                .terms(v -> v.value(
-                    request.getCategories().stream()
-                        .map(FieldValue::of)
-                        .toList()
-                ))
-            ));
+            bool.filter(
+                f -> f.terms(
+                    t -> t.field("categories")
+                        .terms(
+                            v -> v.value(
+                                request.getCategories().stream().map(FieldValue::of).toList()))));
         }
 
         if (request.getMinPrice() != null || request.getMaxPrice() != null) {
@@ -94,17 +91,14 @@ public class ProductSearchService {
         }
 
         if (request.getMinRating() != null) {
-            bool.filter(f -> f.range(r -> r.number(n -> n
-                .field("rating")
-                .gte(request.getMinRating())
-            )));
+            bool.filter(
+                f -> f.range(r -> r.number(n -> n.field("rating").gte(request.getMinRating()))));
         }
 
         BoolQuery boolQuery = bool.build();
         Query query = boolQuery._toQuery();
 
-        NativeQueryBuilder builder = NativeQuery.builder()
-            .withQuery(query);
+        NativeQueryBuilder builder = NativeQuery.builder().withQuery(query);
 
         builder.withPageable(PageRequest.of(request.getPage(), request.getSize()));
         applySorting(builder, request.getSort());
@@ -113,17 +107,14 @@ public class ProductSearchService {
     }
 
     private void applySorting(NativeQueryBuilder builder, ProductSort sort) {
-        if (sort == null) return;
+        if (sort == null)
+            return;
 
         switch (sort) {
-            case PRICE_ASC ->
-                builder.withSort(Sort.by(Sort.Order.asc("price")));
-            case PRICE_DESC ->
-                builder.withSort(Sort.by(Sort.Order.desc("price")));
-            case TOP_RATED ->
-                builder.withSort(Sort.by(Sort.Order.desc("rating")));
-            case LATEST ->
-                builder.withSort(Sort.by(Sort.Order.desc("createdAt")));
+            case PRICE_ASC -> builder.withSort(Sort.by(Sort.Order.asc("price")));
+            case PRICE_DESC -> builder.withSort(Sort.by(Sort.Order.desc("price")));
+            case TOP_RATED -> builder.withSort(Sort.by(Sort.Order.desc("rating")));
+            case LATEST -> builder.withSort(Sort.by(Sort.Order.desc("createdAt")));
             default -> {
             }
         }

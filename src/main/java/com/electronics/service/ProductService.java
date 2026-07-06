@@ -92,7 +92,8 @@ public class ProductService {
         Merchant merchant = resolveMerchant(request.merchantId());
         applyRequest(product, request, null, merchant);
         Product saved = productRepository.save(product);
-        eventPublisher.publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+        eventPublisher
+            .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
     }
 
@@ -107,7 +108,8 @@ public class ProductService {
         }
         applyRequest(product, request, id, merchant);
         Product saved = productRepository.save(product);
-        eventPublisher.publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+        eventPublisher
+            .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
     }
 
