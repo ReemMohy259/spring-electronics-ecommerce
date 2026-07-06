@@ -1,0 +1,666 @@
+/* ============================================================================
+ * VoltEdge — Keycloak Login Theme (Complete Custom Design)
+ * ============================================================================
+ * Design tokens & component styles for the VoltEdge electronics e-commerce
+ * platform login pages. Built without PatternFly dependency — clean BEM.
+ * ==========================================================================*/
+
+/* --------------------------------------------------------------------------
+ * 1. Design Tokens
+ * ------------------------------------------------------------------------ */
+:root {
+  --ve-primary: #0d9488;
+  --ve-primary-hover: #0f766e;
+  --ve-primary-light: rgba(13, 148, 136, 0.08);
+  --ve-primary-lighter: rgba(13, 148, 136, 0.04);
+  --ve-primary-glow: rgba(13, 148, 136, 0.25);
+  --ve-danger: #ef4444;
+  --ve-danger-light: rgba(239, 68, 68, 0.08);
+  --ve-success: #22c55e;
+  --ve-success-light: rgba(34, 197, 94, 0.08);
+  --ve-warning: #f59e0b;
+  --ve-warning-light: rgba(245, 158, 11, 0.08);
+  --ve-info: #3b82f6;
+  --ve-info-light: rgba(59, 130, 246, 0.08);
+  --ve-text: #0f172a;
+  --ve-text-secondary: #475569;
+  --ve-muted: #94a3b8;
+  --ve-border: #e2e8f0;
+  --ve-border-focus: #0d9488;
+  --ve-surface: #ffffff;
+  --ve-bg: #0b1121;
+  --ve-bg-card: #ffffff;
+  --ve-radius: 16px;
+  --ve-radius-sm: 10px;
+  --ve-radius-xs: 6px;
+  --ve-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --ve-shadow-hover: 0 30px 60px -12px rgba(0, 0, 0, 0.35);
+  --ve-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --ve-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+ * 2. Reset & Base
+ * ------------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--ve-font);
+  color: var(--ve-text);
+  background: var(--ve-bg);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+a {
+  color: var(--ve-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--ve-transition);
+}
+
+a:hover {
+  color: var(--ve-primary-hover);
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+ * 3. Page Layout
+ * ------------------------------------------------------------------------ */
+.ve-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+.ve-page__bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.ve-page__gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(13, 148, 136, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(15, 118, 110, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(13, 148, 136, 0.08) 0%, transparent 50%);
+}
+
+.ve-page__pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.ve-page__main {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  animation: ve-fadeInUp 0.5s ease-out;
+}
+
+.ve-page__footer {
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+  text-align: center;
+  color: var(--ve-muted);
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+ * 4. Card
+ * ------------------------------------------------------------------------ */
+.ve-card {
+  background: var(--ve-bg-card);
+  border-radius: var(--ve-radius);
+  box-shadow: var(--ve-shadow);
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ve-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--ve-primary), var(--ve-primary-hover), #14b8a6);
+}
+
+.ve-card--wide {
+  max-width: 640px;
+}
+
+.ve-card__brand {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.ve-card__title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ve-text);
+  margin-top: 0.75rem;
+  line-height: 1.3;
+}
+
+.ve-card__tagline {
+  color: var(--ve-text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.35rem;
+  font-weight: 400;
+}
+
+.ve-card__desc {
+  color: var(--ve-text-secondary);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+.ve-card__footer-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--ve-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+ * 5. Logo
+ * ------------------------------------------------------------------------ */
+.ve-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.ve-logo__icon {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+.ve-logo__text {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--ve-text);
+  letter-spacing: -0.02em;
+}
+
+/* --------------------------------------------------------------------------
+ * 6. Alert / Messages
+ * ------------------------------------------------------------------------ */
+.ve-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--ve-radius-sm);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  border-left: 4px solid transparent;
+  animation: ve-slideDown 0.3s ease-out;
+}
+
+.ve-alert--error {
+  background: var(--ve-danger-light);
+  border-left-color: var(--ve-danger);
+  color: var(--ve-danger);
+}
+
+.ve-alert--success {
+  background: var(--ve-success-light);
+  border-left-color: var(--ve-success);
+  color: var(--ve-success);
+}
+
+.ve-alert--warning {
+  background: var(--ve-warning-light);
+  border-left-color: var(--ve-warning);
+  color: var(--ve-warning);
+}
+
+.ve-alert--info {
+  background: var(--ve-info-light);
+  border-left-color: var(--ve-info);
+  color: var(--ve-info);
+}
+
+.ve-alert__icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.ve-alert__text {
+  flex: 1;
+}
+
+.ve-alert__close {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.5;
+  padding: 0 0.2rem;
+  color: inherit;
+  transition: opacity var(--ve-transition);
+}
+
+.ve-alert__close:hover {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+ * 7. Form
+ * ------------------------------------------------------------------------ */
+.ve-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ve-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ve-form__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ve-form__actions--center {
+  justify-content: center;
+}
+
+/* --------------------------------------------------------------------------
+ * 8. Field / Input
+ * ------------------------------------------------------------------------ */
+.ve-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ve-field__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ve-text);
+}
+
+.ve-field__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--ve-border);
+  border-radius: var(--ve-radius-sm);
+  background: var(--ve-surface);
+  transition: border-color var(--ve-transition), box-shadow var(--ve-transition);
+}
+
+.ve-field__input-wrap--focused,
+.ve-field__input-wrap:focus-within {
+  border-color: var(--ve-border-focus);
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.ve-field__icon {
+  flex-shrink: 0;
+  color: var(--ve-muted);
+  margin-left: 0.85rem;
+  pointer-events: none;
+}
+
+.ve-field__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.95rem;
+  font-family: var(--ve-font);
+  color: var(--ve-text);
+  outline: none;
+  min-width: 0;
+}
+
+.ve-field__input::placeholder {
+  color: var(--ve-muted);
+}
+
+.ve-field__toggle {
+  background: none;
+  border: none;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  color: var(--ve-muted);
+  transition: color var(--ve-transition);
+  display: flex;
+  align-items: center;
+}
+
+.ve-field__toggle:hover {
+  color: var(--ve-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+ * 9. Custom Checkbox (Remember Me)
+ * ------------------------------------------------------------------------ */
+.ve-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  user-select: none;
+  position: relative;
+}
+
+.ve-checkbox__input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ve-checkbox__checkmark {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--ve-border);
+  border-radius: var(--ve-radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--ve-transition);
+  flex-shrink: 0;
+  background: var(--ve-surface);
+}
+
+.ve-checkbox__checkmark::after {
+  content: '';
+  width: 5px;
+  height: 9px;
+  border: solid var(--ve-surface);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  opacity: 0;
+  transition: all var(--ve-transition);
+  margin-top: -1px;
+}
+
+.ve-checkbox__input:checked + .ve-checkbox__checkmark {
+  background: var(--ve-primary);
+  border-color: var(--ve-primary);
+}
+
+.ve-checkbox__input:checked + .ve-checkbox__checkmark::after {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+}
+
+.ve-checkbox__input:focus-visible + .ve-checkbox__checkmark {
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.ve-checkbox__label {
+  color: var(--ve-text-secondary);
+}
+
+/* --------------------------------------------------------------------------
+ * 10. Buttons
+ * ------------------------------------------------------------------------ */
+.ve-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--ve-radius-sm);
+  font-family: var(--ve-font);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--ve-transition);
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.ve-btn--primary {
+  background: var(--ve-primary);
+  color: #ffffff;
+  border-color: var(--ve-primary);
+}
+
+.ve-btn--primary:hover {
+  background: var(--ve-primary-hover);
+  border-color: var(--ve-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px var(--ve-primary-glow);
+  text-decoration: none;
+  color: #ffffff;
+}
+
+.ve-btn--primary:active {
+  transform: translateY(0);
+}
+
+.ve-btn--secondary {
+  background: transparent;
+  color: var(--ve-text);
+  border-color: var(--ve-border);
+}
+
+.ve-btn--secondary:hover {
+  border-color: var(--ve-primary);
+  color: var(--ve-primary);
+  text-decoration: none;
+}
+
+.ve-btn__arrow {
+  transition: transform var(--ve-transition);
+}
+
+.ve-btn:hover .ve-btn__arrow {
+  transform: translateX(3px);
+}
+
+/* --------------------------------------------------------------------------
+ * 11. Social Login
+ * ------------------------------------------------------------------------ */
+.ve-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.ve-divider::before,
+.ve-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ve-border);
+}
+
+.ve-divider__text {
+  font-size: 0.8rem;
+  color: var(--ve-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.ve-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ve-btn--social {
+  background: var(--ve-surface);
+  border-color: var(--ve-border);
+  color: var(--ve-text);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.ve-btn--social:hover {
+  border-color: var(--ve-primary);
+  background: var(--ve-primary-lighter);
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: var(--ve-text);
+}
+
+/* --------------------------------------------------------------------------
+ * 12. Links
+ * ------------------------------------------------------------------------ */
+.ve-link {
+  font-weight: 500;
+  color: var(--ve-primary);
+  transition: color var(--ve-transition);
+  text-decoration: none;
+}
+
+.ve-link:hover {
+  color: var(--ve-primary-hover);
+  text-decoration: underline;
+}
+
+.ve-link--sm {
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+ * 13. Terms & Conditions
+ * ------------------------------------------------------------------------ */
+.ve-terms {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--ve-border);
+  border-radius: var(--ve-radius-sm);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ve-text-secondary);
+  background: var(--ve-primary-lighter);
+}
+
+.ve-terms::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ve-terms::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ve-terms::-webkit-scrollbar-thumb {
+  background: var(--ve-border);
+  border-radius: 3px;
+}
+
+/* --------------------------------------------------------------------------
+ * 14. Animations
+ * ------------------------------------------------------------------------ */
+@keyframes ve-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ve-slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 15. Responsive
+ * ------------------------------------------------------------------------ */
+@media (max-width: 480px) {
+  .ve-card {
+    padding: 1.75rem 1.25rem;
+    border-radius: 12px;
+  }
+
+  .ve-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .ve-logo__icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .ve-logo__text {
+    font-size: 1.35rem;
+  }
+
+  .ve-card__title {
+    font-size: 1.15rem;
+  }
+
+  .ve-page {
+    padding: 1rem 0.75rem;
+    justify-content: flex-start;
+    padding-top: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .ve-page__main {
+    max-width: 440px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+ * 16. Keycloak Override Helpers
+ * ------------------------------------------------------------------------ */
+.kc-feedback-text {
+  display: none;
+}

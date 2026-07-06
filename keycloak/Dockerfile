@@ -25,4 +25,4 @@ COPY --from=builder /opt/keycloak/ /opt/keycloak/
 COPY keycloak/realm-config/import/ /opt/keycloak/data/import/
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start-dev", "--import-realm"]
+CMD ["start-dev", "--import-realm", "--spi-theme-static-max-age=-1", "--spi-theme-cache-themes=false", "--spi-theme-cache-templates=false"]
