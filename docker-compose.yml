@@ -28,6 +28,19 @@ services:
       interval: 5s
       retries: 10
 
+  postgres-app:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: voltedge
+      POSTGRES_USER: voltedge
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-voltedge}
+    volumes:
+      - app-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U voltedge"]
+      interval: 5s
+      retries: 10
+
   keycloak:
     build:
       context: .
@@ -68,7 +81,68 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: /bin/sh
+    command: >
+      -c "
+      ollama serve &
+      until curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
+      ollama pull nomic-embed-text
+      wait
+      "
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -s http://localhost:11434/api/tags | grep -q nomic-embed-text"]
+      interval: 10s
+      retries: 30
+      start_period: 40s
+
+  be:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-app:5432/voltedge
+      DB_USERNAME: voltedge
+      DB_PASSWORD: ${DB_PASSWORD:-voltedge}
+      AUTH_SERVICE_URI: http://keycloak:8080/realms/electronics
+      KEYCLOAK_ADMIN_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_USERNAME: ${KC_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
+      KEYCLOAK_ADMIN_REALM: electronics
+      ELASTICSEARCH_URIS: http://elasticsearch:9200
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-a1sbyp5c}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-439382614736994}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      SPRING_AI_OPENAI_API_KEY: ${GROQ_API_KEY}
+      SPRING_AI_VECTORSTORE_QDRANT_HOST: qdrant
+      SPRING_AI_OLLAMA_BASE_URL: http://ollama:11434
+    depends_on:
+      postgres-app:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_started
+      qdrant:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+
 volumes:
   kc-pgdata:
   es_data:
   qdrant_data:
+  app-pgdata:
+  ollama_data:
