@@ -150,8 +150,8 @@
                 "view-authorization",
                 "view-events",
                 "create-client",
-                "query-groups",
                 "manage-authorization",
+                "query-groups",
                 "manage-realm",
                 "query-users",
                 "view-identity-providers",
@@ -160,8 +160,8 @@
                 "view-realm",
                 "view-users",
                 "view-clients",
-                "query-realms",
-                "query-clients"
+                "query-clients",
+                "query-realms"
               ]
             }
           },
@@ -829,8 +829,8 @@
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
       "defaultClientScopes": [
-        "web-origins",
         "service_account",
+        "web-origins",
         "acr",
         "profile",
         "roles",
@@ -1988,8 +1988,8 @@
       "hideOnLogin": false,
       "config": {
         "offlineAccess": "false",
-        "clientId": "1046677431050-i98r8qgct33245oqup74t5rtn5pip4qi.apps.googleusercontent.com",
         "acceptsPromptNoneForwardFromClient": "false",
+        "clientId": "1046677431050-i98r8qgct33245oqup74t5rtn5pip4qi.apps.googleusercontent.com",
         "showInAccountConsole": "ALWAYS",
         "filteredByClaim": "false",
         "jwtAuthorizationGrantEnabled": "false",
@@ -2015,14 +2015,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-attribute-mapper",
-            "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-address-mapper",
-            "saml-user-property-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-full-name-mapper"
+            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "oidc-address-mapper",
+            "oidc-full-name-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-user-attribute-mapper",
+            "oidc-usermodel-attribute-mapper"
           ]
         }
       },
@@ -2117,14 +2117,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-usermodel-attribute-mapper",
             "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
-            "saml-role-list-mapper",
             "oidc-sha256-pairwise-sub-mapper",
-            "oidc-address-mapper",
+            "oidc-full-name-mapper",
             "saml-user-attribute-mapper",
-            "oidc-full-name-mapper"
+            "oidc-address-mapper",
+            "oidc-usermodel-attribute-mapper",
+            "saml-user-property-mapper",
+            "saml-role-list-mapper"
           ]
         }
       }
@@ -3225,7 +3225,7 @@
     "scimApiEnabled": "false",
     "darkMode": "true"
   },
-  "keycloakVersion": "26.6.3",
+  "keycloakVersion": "26.6.4",
   "userManagedAccessAllowed": false,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,
