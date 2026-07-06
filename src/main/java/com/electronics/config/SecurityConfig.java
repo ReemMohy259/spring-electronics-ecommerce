@@ -32,7 +32,8 @@ public class SecurityConfig {
                         "/actuator/health",
                         "/api/v1/categories/**",
                         "/api/v1/products/**",
-                        "/api/v1/chat")
+                        "/api/v1/chat",
+                        "/api/v1/stripe/**")
                     .permitAll()
                     .requestMatchers("/api/v1/admin/**")
                     .hasRole("ADMIN")
