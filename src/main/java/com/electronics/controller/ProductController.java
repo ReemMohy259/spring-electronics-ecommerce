@@ -67,7 +67,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MERCHANT')")
+    @PreAuthorize("hasRole('MERCHANT')")
     public ProductResponse update(
         @PathVariable Integer id,
         @Valid @RequestBody ProductRequest request) {

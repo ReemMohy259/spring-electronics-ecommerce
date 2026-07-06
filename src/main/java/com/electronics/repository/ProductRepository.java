@@ -5,6 +5,7 @@ import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,4 +57,21 @@ public interface ProductRepository
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Product p WHERE p.id IN :ids")
     List<Product> findAllByIdForUpdate(List<Integer> ids);
+
+    @Query("""
+        SELECT p FROM Product p
+        LEFT JOIN FETCH p.categories
+        JOIN FETCH p.merchant
+        WHERE p.id IN :ids
+          AND p.deleted = false
+        """)
+    List<Product> findActiveByIdIn(@Param("ids") List<Integer> ids);
+
+    @Query("""
+        SELECT p FROM Product p
+        LEFT JOIN FETCH p.categories
+        JOIN FETCH p.merchant
+        WHERE p.deleted = false
+        """)
+    List<Product> findAllActive();
 }

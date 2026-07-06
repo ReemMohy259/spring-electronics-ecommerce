@@ -2,6 +2,7 @@ package com.electronics.service;
 
 import com.electronics.dto.CategoryRequest;
 import com.electronics.dto.CategoryResponse;
+import com.electronics.dto.PageResponse;
 import com.electronics.entity.Category;
 import com.electronics.exception.CategoryNotFoundException;
 import com.electronics.exception.DuplicateResourceException;
@@ -9,6 +10,7 @@ import com.electronics.exception.ResourceInUseException;
 import com.electronics.repository.CategoryRepository;
 import com.electronics.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,11 @@ public class CategoryService {
             .stream()
             .map(CategoryResponse::from)
             .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PageResponse<CategoryResponse> findAll(Pageable pageable) {
+        return PageResponse.from(categoryRepository.findAll(pageable), CategoryResponse::from);
     }
 
     @Transactional(readOnly = true)

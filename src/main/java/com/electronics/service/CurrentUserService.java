@@ -69,7 +69,9 @@ public class CurrentUserService {
         Set<Role> roles = extractRoles(jwt);
 
         User user;
-        if (roles.contains(Role.MERCHANT)) {
+        if (roles.contains(Role.ADMIN)) {
+            user = new User();
+        } else if (roles.contains(Role.MERCHANT)) {
             user = new Merchant();
         } else if (roles.contains(Role.CUSTOMER)) {
             user = new Customer();

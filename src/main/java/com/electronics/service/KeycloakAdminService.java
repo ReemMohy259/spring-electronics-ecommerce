@@ -9,6 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -46,6 +47,24 @@ public class KeycloakAdminService {
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
         restTemplate.exchange(url, HttpMethod.PUT, entity, Void.class);
+    }
+
+    public long countUsersWithRealmRole(String roleName) {
+        return getUsersWithRealmRole(roleName).size();
+    }
+
+    public List<Map<String, Object>> getUsersWithRealmRole(String roleName) {
+        String accessToken = getAdminAccessToken();
+        String url = "%s/admin/realms/%s/roles/%s/users?first=0&max=1000"
+            .formatted(keycloakServerUrl, realm, roleName);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        ResponseEntity<List> response = restTemplate
+            .exchange(url, HttpMethod.GET, new HttpEntity<>(headers), List.class);
+        List<Map<String, Object>> users = response.getBody();
+        return users == null ? List.of() : users;
     }
 
     private String getAdminAccessToken() {
