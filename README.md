@@ -550,11 +550,27 @@ Clone the frontend repository and follow its README to run the Angular applicati
 
 ### 📸 ScreenShots
 
-#### 1- Login Page
+### 1- Login Page
 
-#### 2- Customer UI
+<img width="738" height="792" align="center" alt="image" src="https://github.com/user-attachments/assets/05c8f2f2-6239-4821-ad9a-4ed1fca526f7" />
+
+---
+
+### 2- Customer UI
+
+#### I. Light Mode
+<img width="1331" height="921" align="center" alt="image" src="https://github.com/user-attachments/assets/4c1a4b66-c3d1-4ce7-a7cc-f1fa6f9f7793" />
+
+--- 
+
+#### II. Dark Mode
+<img width="1331" height="921" align="center" alt="image" src="https://github.com/user-attachments/assets/82ea8ff9-d35d-4a27-8f0a-29b41e2d8304" />
+
+---
 
 #### 3- Merchant UI
+
+---
 
 #### 4- Admin UI
 
