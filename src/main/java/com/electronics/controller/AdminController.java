@@ -1,6 +1,8 @@
 package com.electronics.controller;
 
 import com.electronics.dto.CategoryRequest;
+import com.electronics.dto.AdminDashboardStatsResponse;
+import com.electronics.dto.AdminUserResponse;
 import com.electronics.dto.CategoryResponse;
 import com.electronics.dto.PageResponse;
 import com.electronics.dto.ProductResponse;
@@ -21,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -30,6 +35,16 @@ public class AdminController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private final AdminService adminService;
+
+    @GetMapping("/dashboard/stats")
+    public AdminDashboardStatsResponse getDashboardStats() {
+        return adminService.getDashboardStats();
+    }
+
+    @GetMapping("/users")
+    public List<AdminUserResponse> getUsers(@RequestParam String role) {
+        return adminService.getUsers(role);
+    }
 
     @GetMapping("/products")
     public PageResponse<ProductResponse> findAllProducts(
