@@ -47,7 +47,7 @@ public class ProductService {
     }
 
     private static final Set<String> ALLOWED_SORT_FIELDS = Set
-            .of("id", "name", "price", "stockQuantity", "soldUnits", "createdAt");
+        .of("id", "name", "price", "stockQuantity", "soldUnits", "createdAt");
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -58,11 +58,11 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public PageResponse<ProductResponse> findAll(
-            Integer categoryId,
-            BigDecimal minimumPrice,
-            BigDecimal maximumPrice,
-            String keyword,
-            Pageable pageable) {
+        Integer categoryId,
+        BigDecimal minimumPrice,
+        BigDecimal maximumPrice,
+        String keyword,
+        Pageable pageable) {
         validatePriceRange(minimumPrice, maximumPrice);
         Specification<Product> specification = ProductSpecifications.isActive();
         if (categoryId != null) {
@@ -79,7 +79,7 @@ public class ProductService {
         }
 
         Page<Product> products = productRepository
-                .findAll(specification, normalizePageable(pageable));
+            .findAll(specification, normalizePageable(pageable));
         return PageResponse.from(products, ProductResponse::from);
     }
 
@@ -96,7 +96,7 @@ public class ProductService {
         Product saved = productRepository.save(product);
         ingestionService.indexProduct(saved);
         eventPublisher
-                .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+            .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
     }
 
@@ -107,13 +107,13 @@ public class ProductService {
         Merchant merchant = admin ? getMerchant(request.merchantId()) : product.getMerchant();
         if (!admin && !merchant.getId().equals(request.merchantId())) {
             throw new InvalidRequestException(
-                    "Merchants cannot transfer products to another merchant");
+                "Merchants cannot transfer products to another merchant");
         }
         applyRequest(product, request, id, merchant);
         Product saved = productRepository.save(product);
         ingestionService.indexProduct(saved);
         eventPublisher
-                .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
+            .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
     }
 
@@ -127,14 +127,14 @@ public class ProductService {
 
     private Product getActiveProduct(Integer id) {
         return productRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new ProductNotFoundException(id));
+            .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     private void applyRequest(
-            Product product,
-            ProductRequest request,
-            Integer currentProductId,
-            Merchant merchant) {
+        Product product,
+        ProductRequest request,
+        Integer currentProductId,
+        Merchant merchant) {
         String sku = normalizeOptional(request.sku());
         ensureSkuAvailable(sku, currentProductId);
 
@@ -156,10 +156,10 @@ public class ProductService {
             return getActiveProduct(id);
         }
         return productRepository
-                .findByIdAndDeletedFalseAndMerchantKeycloakId(
-                        id,
-                        currentUserService.getCurrentUser().keycloakId())
-                .orElseThrow(() -> new ProductNotFoundException(id));
+            .findByIdAndDeletedFalseAndMerchantKeycloakId(
+                id,
+                currentUserService.getCurrentUser().keycloakId())
+            .orElseThrow(() -> new ProductNotFoundException(id));
     }
 
     private Merchant resolveMerchant(Integer merchantId) {
@@ -168,23 +168,23 @@ public class ProductService {
         }
         CurrentUser c = currentUserService.getCurrentUser();
         Merchant merchant = merchantRepository.findByEmail(c.email())
-                .orElseThrow(() -> new MerchantNotFoundException(merchantId));
+            .orElseThrow(() -> new MerchantNotFoundException(merchantId));
         if (!merchant.getId().equals(merchantId)) {
             throw new InvalidRequestException(
-                    "Merchants can only create products under their own account");
+                "Merchants can only create products under their own account");
         }
         return merchant;
     }
 
     private Merchant getMerchant(Integer merchantId) {
         return merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new MerchantNotFoundException(merchantId));
+            .orElseThrow(() -> new MerchantNotFoundException(merchantId));
     }
 
     private boolean isAdmin() {
         return getAuthentication().getAuthorities()
-                .stream()
-                .anyMatch(authority -> Objects.equals(authority.getAuthority(), "ROLE_ADMIN"));
+            .stream()
+            .anyMatch(authority -> Objects.equals(authority.getAuthority(), "ROLE_ADMIN"));
     }
 
     private Authentication getAuthentication() {
@@ -194,16 +194,16 @@ public class ProductService {
     private Set<Category> loadCategories(Set<Integer> categoryIds) {
         List<Category> categories = categoryRepository.findAllById(categoryIds);
         Set<Integer> foundIds = categories.stream()
-                .map(Category::getId)
-                .collect(Collectors.toSet());
+            .map(Category::getId)
+            .collect(Collectors.toSet());
         System.out.println(foundIds);
         Set<Integer> missingIds = categoryIds.stream()
-                .filter(id -> !foundIds.contains(id))
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+            .filter(id -> !foundIds.contains(id))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
         if (!missingIds.isEmpty()) {
             throw new InvalidRequestException(
-                    "One or more categories do not exist",
-                    Map.of("missingCategoryIds", missingIds));
+                "One or more categories do not exist",
+                Map.of("missingCategoryIds", missingIds));
         }
         System.out.println(categories);
         return new LinkedHashSet<>(categories);
@@ -214,7 +214,7 @@ public class ProductService {
             return;
         }
         boolean exists = currentProductId == null ? productRepository.existsBySkuIgnoreCase(sku)
-                : productRepository.existsBySkuIgnoreCaseAndIdNot(sku, currentProductId);
+            : productRepository.existsBySkuIgnoreCaseAndIdNot(sku, currentProductId);
         if (exists) {
             throw new DuplicateResourceException("Product", "sku", sku);
         }
@@ -229,8 +229,8 @@ public class ProductService {
         for (Sort.Order order : sort) {
             if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
                 throw new InvalidRequestException(
-                        "Unsupported product sort field",
-                        Map.of("field", order.getProperty(), "allowedFields", ALLOWED_SORT_FIELDS));
+                    "Unsupported product sort field",
+                    Map.of("field", order.getProperty(), "allowedFields", ALLOWED_SORT_FIELDS));
             }
         }
         return PageRequest.of(pageable.getPageNumber(), size, sort);
@@ -244,7 +244,7 @@ public class ProductService {
             throw new InvalidRequestException("Maximum price cannot be negative");
         }
         if (minimumPrice != null && maximumPrice != null
-                && minimumPrice.compareTo(maximumPrice) > 0) {
+            && minimumPrice.compareTo(maximumPrice) > 0) {
             throw new InvalidRequestException("Minimum price cannot exceed maximum price");
         }
     }
