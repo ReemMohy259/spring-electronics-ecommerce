@@ -1,11 +1,10 @@
 package com.electronics.exception;
 
-import com.electronics.exception.payment.PaymentAlreadyProcessedException;
-import com.electronics.exception.payment.PaymentFailedException;
-import com.electronics.exception.payment.PaymentNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,22 +14,13 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(PaymentNotFoundException.class)
-    public ResponseEntity<String> handlePaymentNotFound(PaymentNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(PaymentFailedException.class)
-    public ResponseEntity<String> handlePaymentFailed(PaymentFailedException ex) {
-        return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(PaymentAlreadyProcessedException.class)
-    public ResponseEntity<String> handleAlreadyProcessed(PaymentAlreadyProcessedException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    @ExceptionHandler(EcommerceException.class)
+    public ResponseEntity<Map<String, Object>> handleEcommerceException(EcommerceException e) {
+        return buildErrorResponse(e.getMessage(), e.getStatusCode(), e.getErrorCode(), e.getInfo());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -71,16 +61,20 @@ public class GlobalExceptionHandler {
             Map.of("fields", fieldErrors));
     }
 
-    @ExceptionHandler(EcommerceException.class)
-    public ResponseEntity<Map<String, Object>> handleEcommerceException(EcommerceException e) {
-        return buildErrorResponse(e.getMessage(), e.getStatusCode(), e.getErrorCode(), e.getInfo());
-    }
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAuthorizationDeniedException(
+        AuthorizationDeniedException e) {
 
-    // TODO: Handle AuthorizationDeniedException
+        return buildErrorResponse(
+            "Access denied",
+            HttpStatus.FORBIDDEN.value(),
+            "ACCESS_DENIED",
+            Map.of());
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleEcommerceException(Exception e) {
-        e.printStackTrace();
+        log.error("Unhandled exception occurred", e);
         return buildErrorResponse(
             e.getMessage(),
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
@@ -101,5 +95,4 @@ public class GlobalExceptionHandler {
         errorResponse.put("timestamp", LocalDateTime.now());
         return ResponseEntity.status(status).body(errorResponse);
     }
-
 }

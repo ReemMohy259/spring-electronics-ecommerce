@@ -1,5 +1,5 @@
 package com.electronics.entity;
 
 public enum OrderStatus {
-    PENDING, PAID, SHIPPED, DELIVERED, CANCELLED
+    PENDING, PROCESSING, PAID, SHIPPED, DELIVERED, CANCELLED
 }

@@ -1,17 +1,12 @@
 package com.electronics.controller;
 
 import com.electronics.dto.checkout.CheckoutInitResponse;
-import com.electronics.dto.checkout.ConfirmCheckoutRequest;
-import com.electronics.dto.checkout.OrderResponse;
+import com.electronics.dto.checkout.CheckoutStatusResponse;
 import com.electronics.service.CheckoutService;
 import com.electronics.util.CurrentUserDataUtil;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/checkout")
@@ -27,10 +22,17 @@ public class CheckoutController {
         return ResponseEntity.ok(checkoutService.initiateCheckout(customerId));
     }
 
-    @PostMapping("/confirm")
-    public ResponseEntity<OrderResponse> confirmCheckout(
-        @Valid @RequestBody ConfirmCheckoutRequest request) {
+    // The only sanctioned way out of a PENDING order without paying it.
+    @PostMapping("/{paymentIntentId}/cancel")
+    public ResponseEntity<Void> cancelCheckout(@PathVariable String paymentIntentId) {
         Integer customerId = currentUserDataUtil.getCurrentUserId();
-        return ResponseEntity.ok(checkoutService.confirmCheckout(customerId, request));
+        checkoutService.cancelCheckout(customerId, paymentIntentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{paymentIntentId}/status")
+    public ResponseEntity<CheckoutStatusResponse> getStatus(@PathVariable String paymentIntentId) {
+        Integer customerId = currentUserDataUtil.getCurrentUserId();
+        return ResponseEntity.ok(checkoutService.getCheckoutStatus(customerId, paymentIntentId));
     }
 }

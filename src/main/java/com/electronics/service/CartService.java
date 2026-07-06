@@ -3,10 +3,7 @@ package com.electronics.service;
 import com.electronics.dto.cart.AddToCartRequest;
 import com.electronics.dto.cart.CartResponse;
 import com.electronics.dto.cart.UpdateCartItemRequest;
-import com.electronics.entity.Cart;
-import com.electronics.entity.CartItem;
-import com.electronics.entity.Customer;
-import com.electronics.entity.Product;
+import com.electronics.entity.*;
 import com.electronics.exception.cart.CartItemNotFoundException;
 import com.electronics.repository.CartItemRepository;
 import com.electronics.repository.CartRepository;
@@ -144,6 +141,32 @@ public class CartService {
         cartItemRepository.deleteByCart(cart);
         cart.setTotalQuantity(0);
         cart.setTotalPrice(BigDecimal.ZERO);
+        cartRepository.save(cart);
+    }
+
+    public void removeItemsForOrder(Cart cart, Order order) {
+        for (OrderItem orderItem : order.getOrderItems()) {
+            cart.getCartItems()
+                .stream()
+                .filter(ci -> ci.getProduct().getId().equals(orderItem.getProduct().getId()))
+                .findFirst()
+                .ifPresent(cartItem -> {
+                    if (cartItem.getQuantity() <= orderItem.getQuantity()) {
+                        // Fully covered by what was paid for — drop the line entirely.
+                        cart.removeItem(cartItem);
+                        cartItemRepository.delete(cartItem); // adjust to your actual repo field
+                    } else {
+                        // Customer added more of this product after checkout started —
+                        // only remove the quantity that was actually paid for.
+                        cartItem.setQuantity(cartItem.getQuantity() - orderItem.getQuantity());
+                    }
+                });
+            // If no matching cartItem was found, the customer already removed it
+            // themselves before the webhook landed — nothing to reconcile.
+        }
+
+        // Recompute totalQuantity / totalPrice however your class currently does it
+        // (e.g. a private recalculateTotals(cart) helper), then persist.
         cartRepository.save(cart);
     }
 }
