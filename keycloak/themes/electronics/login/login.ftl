@@ -92,7 +92,7 @@
 
             <#if social.providers?? && social.providers?has_content>
                 <div class="ve-divider">
-                    <span class="ve-divider__text">${msg("orContinueWith")}</span>
+                    <span class="ve-divider__text">${msg("or Continue With")}</span>
                 </div>
                 <div class="ve-social">
                     <#list social.providers as provider>

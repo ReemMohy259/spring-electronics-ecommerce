@@ -3,7 +3,7 @@
 <@layout.registrationLayout; section>
     <#if section = "header">
     <#elseif section = "form">
-        <div class="ve-card">
+        <div class="ve-card ve-card--wide">
             <div class="ve-card__brand">
                 <div class="ve-logo">
                     <svg class="ve-logo__icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -11,7 +11,7 @@
                     </svg>
                     <span class="ve-logo__text">VoltEdge</span>
                 </div>
-                <h1 class="ve-card__title">${msg("registerTitle")}</h1>
+                <h1 class="ve-card__tagline">Start your journey by creating your account</h1>
             </div>
 
             <#if message?has_content && message.type != "">
@@ -117,8 +117,8 @@
             </form>
 
             <p class="ve-card__footer-text">
-                ${msg("alreadyHaveAccount")}
-                <a href="${url.loginUrl}" class="ve-link">${msg("doSignIn")}</a>
+                ${msg("Already Have Account")}
+                <a href="${url.loginUrl}" class="ve-link">${msg("Sign In")}</a>
             </p>
         </div>
     </#if>

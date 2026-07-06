@@ -156,7 +156,13 @@ a:hover {
 }
 
 .ve-card--wide {
-  max-width: 640px;
+  background: var(--ve-bg-card);
+  border-radius: var(--ve-radius);
+  box-shadow: var(--ve-shadow);
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+  width: 640px;
 }
 
 .ve-card__brand {
