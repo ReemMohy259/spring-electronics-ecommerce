@@ -4,10 +4,8 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import com.electronics.document.ProductDocument;
-import com.electronics.dto.ProductDto;
-import com.electronics.dto.ProductSearchRequest;
-import com.electronics.dto.ProductSearchResponse;
-import com.electronics.dto.ProductSort;
+import com.electronics.dto.*;
+import com.electronics.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -24,15 +22,21 @@ import java.util.List;
 public class ProductSearchService {
 
     private final ElasticsearchOperations elasticsearchOperations;
+    private final ProductRepository productRepository;
 
     public ProductSearchResponse search(ProductSearchRequest request) {
         NativeQuery query = buildQuery(request);
         SearchHits<ProductDocument> hits = elasticsearchOperations
             .search(query, ProductDocument.class);
 
-        List<ProductDto> products = hits.getSearchHits()
+        List<Integer> productsIds = hits.getSearchHits()
             .stream()
-            .map(hit -> ProductDto.from(hit.getContent()))
+            .map(hit -> hit.getContent().getId())
+            .toList();
+
+        List<ProductResponse> products = productRepository.findAllById(productsIds)
+            .stream()
+            .map(ProductResponse::from)
             .toList();
 
         return ProductSearchResponse.builder()
