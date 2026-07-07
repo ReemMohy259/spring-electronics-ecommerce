@@ -162,7 +162,8 @@ a:hover {
   padding: 2.5rem 2rem;
   position: relative;
   overflow: hidden;
-  width: 640px;
+  width: 100%;
+  max-width: 640px;
 }
 
 .ve-card__brand {

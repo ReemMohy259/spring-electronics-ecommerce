@@ -2,6 +2,9 @@
 <#import "template.ftl" as layout>
 <@layout.registrationLayout; section>
     <#if section = "header">
+      <style>
+        .ve-page__main { max-width: 680px !important; }
+      </style>
     <#elseif section = "form">
         <div class="ve-card ve-card--wide">
             <div class="ve-card__brand">
