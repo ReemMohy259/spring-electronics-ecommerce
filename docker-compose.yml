@@ -81,27 +81,6 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
-  ollama:
-    image: ollama/ollama:latest
-    restart: unless-stopped
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    entrypoint: /bin/sh
-    command: >
-      -c "
-      ollama serve &
-      until curl -s http://localhost:11434/api/tags > /dev/null 2>&1; do sleep 1; done
-      ollama pull nomic-embed-text
-      wait
-      "
-    healthcheck:
-      test: ["CMD", "sh", "-c", "curl -s http://localhost:11434/api/tags | grep -q nomic-embed-text"]
-      interval: 10s
-      retries: 30
-      start_period: 40s
-
   be:
     build:
       context: .
@@ -145,4 +124,3 @@ volumes:
   es_data:
   qdrant_data:
   app-pgdata:
-  ollama_data:
