@@ -52,7 +52,6 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MerchantRepository merchantRepository;
-    private final ProductIngestionService ingestionService;
     private final CurrentUserService currentUserService;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -94,7 +93,6 @@ public class ProductService {
         Merchant merchant = resolveMerchant(request.merchantId());
         applyRequest(product, request, null, merchant);
         Product saved = productRepository.save(product);
-        ingestionService.indexProduct(saved);
         eventPublisher
             .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
@@ -111,7 +109,6 @@ public class ProductService {
         }
         applyRequest(product, request, id, merchant);
         Product saved = productRepository.save(product);
-        ingestionService.indexProduct(saved);
         eventPublisher
             .publishEvent(new ProductIndexEvent(saved.getId(), ProductIndexEvent.Action.INDEX));
         return ProductResponse.from(saved);
@@ -121,7 +118,6 @@ public class ProductService {
     public void softDelete(Integer id) {
         Product product = getManageableProduct(id);
         Product saved = productRepository.save(product);
-        ingestionService.removeFromIndex(saved.getId());
         eventPublisher.publishEvent(new ProductIndexEvent(id, ProductIndexEvent.Action.REMOVE));
     }
 

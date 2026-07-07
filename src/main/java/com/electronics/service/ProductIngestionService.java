@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,7 +28,15 @@ public class ProductIngestionService {
      * from the entity fields and upserts into the vector store.
      */
     @Transactional(readOnly = true)
-    public void indexProduct(Product product) {
+    public void indexProduct(Integer id) {
+        Optional<Product> maybe = productRepository.findById(id);
+
+        if (maybe.isEmpty()) {
+            return;
+        }
+
+        Product product = maybe.get();
+
         if (Boolean.TRUE.equals(product.getDeleted())) {
             // If the product was soft-deleted, remove it from the vector store too
             removeFromIndex(product.getId());
@@ -78,7 +87,7 @@ public class ProductIngestionService {
     public void indexAll() {
         List<Product> products = productRepository.findAllActive();
         log.info("Starting bulk indexing of {} products", products.size());
-        products.forEach(this::indexProduct);
+        products.forEach(p -> this.indexProduct(p.getId()));
         log.info("Bulk indexing complete");
     }
 

@@ -12,15 +12,30 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class ProductIndexEventListener {
 
     private final ProductIndexService productIndexService;
+    private final ProductIngestionService ingestionService;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleProductIndexEvent(ProductIndexEvent event) {
+    public void handleProductIndexEventForElasticSearch(ProductIndexEvent event) {
+        log.info("[{}] Indexing product with id = {} for elastic search.", event.productId(), Thread.currentThread().threadId());
         log.debug(
-            "Handling index event: productId={}, action={}",
+            "Handling index event: productId={}, action={} for elastic search",
             event.productId(),
             event.action());
         switch (event.action()) {
             case INDEX -> productIndexService.indexProduct(event.productId());
+            case REMOVE -> productIndexService.removeProduct(event.productId());
+        }
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleProductIndexEventForEmbeddingModel(ProductIndexEvent event) {
+        log.info("[{}] Indexing product with id = {} for embedding model.", event.productId(), Thread.currentThread().threadId());
+        log.debug(
+            "Handling index event: productId={}, action={} for embedding model",
+            event.productId(),
+            event.action());
+        switch (event.action()) {
+            case INDEX -> ingestionService.indexProduct(event.productId());
             case REMOVE -> productIndexService.removeProduct(event.productId());
         }
     }

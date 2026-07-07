@@ -36,6 +36,7 @@ public class Order {
     @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
     @NotNull
     @Column(name = "status", nullable = false, length = 50)
     private OrderStatus status;
