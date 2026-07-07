@@ -551,8 +551,9 @@ Clone the frontend repository and follow its README to run the Angular applicati
 ### 📸 ScreenShots
 
 ### 1- Login Page
-
-<img width="738" height="792" align="center" alt="image" src="https://github.com/user-attachments/assets/05c8f2f2-6239-4821-ad9a-4ed1fca526f7" />
+<div align="center">
+        <img width="738" height="792" align="center" alt="image" src="https://github.com/user-attachments/assets/05c8f2f2-6239-4821-ad9a-4ed1fca526f7" />
+</div>
 
 ---
 
@@ -569,10 +570,12 @@ Clone the frontend repository and follow its README to run the Angular applicati
 ---
 
 #### 3- Merchant UI
+<img width="1600" height="778" alt="WhatsApp Image 2026-07-07 at 5 21 57 PM" src="https://github.com/user-attachments/assets/b4e383ad-5e3f-4ab9-8d88-df90ddd71f9f" />
 
 ---
 
 #### 4- Admin UI
+<img width="1600" height="778" alt="WhatsApp Image 2026-07-07 at 5 21 59 PM" src="https://github.com/user-attachments/assets/634969e6-74c1-4ead-a2e7-4c0afdea1be1" />
 
 ---
 
