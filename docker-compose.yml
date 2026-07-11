@@ -1,6 +1,5 @@
 
 services:
-
   elasticsearch:
     image: elasticsearch:9.4.2
     container_name: elasticsearch
@@ -18,9 +17,9 @@ services:
   postgres-keycloak:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: ${KC_DB_PASSWORD}
+      POSTGRES_DB: ${KC_DB_NAME:-keycloak}
+      POSTGRES_USER: ${KC_DB_USER:-keycloak}
+      POSTGRES_PASSWORD: ${KC_DB_PASSWORD:-1234}
     volumes:
       - kc-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -31,9 +30,9 @@ services:
   postgres-app:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: voltedge
-      POSTGRES_USER: voltedge
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-voltedge}
+      POSTGRES_DB: ${APP_DB_NAME:-voltedge}
+      POSTGRES_USER: ${APP_DB_USER:-voltedge}
+      POSTGRES_PASSWORD: ${APP_DB_PASSWORD:-voltedge}
     volumes:
       - app-pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -47,16 +46,14 @@ services:
       dockerfile: keycloak/Dockerfile
     environment:
       KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/keycloak
-      KC_DB_USERNAME: keycloak
-      KC_DB_PASSWORD: ${KC_DB_PASSWORD}
-      KEYCLOAK_ADMIN: ${KC_ADMIN_USER}
-      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD}
+      KC_DB_URL: jdbc:postgresql://postgres-keycloak:5432/${KC_DB_NAME:-keycloak}
+      KC_DB_USERNAME: ${KC_DB_USER:-keycloak}
+      KC_DB_PASSWORD: ${KC_DB_PASSWORD:-1234}
+      KEYCLOAK_ADMIN: ${KC_ADMIN_USER:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
     depends_on:
       postgres-keycloak:
         condition: service_healthy
-      elasticsearch:
-        condition: service_started
     ports:
       - "8081:8080"
       - "9000:9000"
@@ -66,11 +63,6 @@ services:
       retries: 10
     volumes:
       - ./keycloak/themes:/opt/keycloak/themes
-    command:
-      - start-dev
-      - --spi-theme-static-max-age=-1
-      - --spi-theme-cache-themes=false
-      - --spi-theme-cache-templates=false
 
   qdrant:
     image: qdrant/qdrant:latest
@@ -81,43 +73,41 @@ services:
     volumes:
       - qdrant_data:/qdrant/storage
 
-  be:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-      DB_URL: jdbc:postgresql://postgres-app:5432/voltedge
-      DB_USERNAME: voltedge
-      DB_PASSWORD: ${DB_PASSWORD:-voltedge}
-      AUTH_SERVICE_URI: http://keycloak:8080/realms/electronics
-      KEYCLOAK_ADMIN_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_ADMIN_USERNAME: ${KC_ADMIN_USER:-admin}
-      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
-      KEYCLOAK_ADMIN_REALM: electronics
-      ELASTICSEARCH_URIS: http://elasticsearch:9200
-      GROQ_API_KEY: ${GROQ_API_KEY}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-a1sbyp5c}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-439382614736994}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      SPRING_AI_OPENAI_API_KEY: ${GROQ_API_KEY}
-      SPRING_AI_VECTORSTORE_QDRANT_HOST: qdrant
-      SPRING_AI_OLLAMA_BASE_URL: http://ollama:11434
-    depends_on:
-      postgres-app:
-        condition: service_healthy
-      elasticsearch:
-        condition: service_started
-      qdrant:
-        condition: service_started
-      keycloak:
-        condition: service_healthy
-      ollama:
-        condition: service_healthy
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      DB_URL: jdbc:postgresql://postgres-app:5432/${APP_DB_NAME:-voltedge}
+#      DB_USERNAME: ${APP_DB_USER:-voltedge}
+#      DB_PASSWORD: ${APP_DB_PASSWORD:-voltedge}
+#      AUTH_SERVICE_URI: http://keycloak:8080/realms/electronics
+#      KEYCLOAK_ADMIN_SERVER_URL: http://keycloak:8080
+#      KEYCLOAK_ADMIN_USER: ${KC_ADMIN_USER:-admin}
+#      KEYCLOAK_ADMIN_PASSWORD: ${KC_ADMIN_PASSWORD:-admin}
+#      KEYCLOAK_ADMIN_REALM: electronics
+#      ELASTICSEARCH_URIS: http://elasticsearch:9200
+#      GROQ_API_KEY: ${GROQ_API_KEY}
+#      GENAI_API_KEY: ${GENAI_API_KEY}
+#      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+#      STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+#      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+#      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+#      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+#      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+#      SPRING_AI_OPENAI_API_KEY: ${GROQ_API_KEY}
+#      SPRING_AI_VECTORSTORE_QDRANT_HOST: qdrant
+#    depends_on:
+#      postgres-app:
+#        condition: service_healthy
+#      elasticsearch:
+#        condition: service_started
+#      qdrant:
+#        condition: service_started
+#      keycloak:
+#        condition: service_healthy
 
 volumes:
   kc-pgdata:

@@ -117,6 +117,7 @@ public class ProductService {
     @Transactional
     public void softDelete(Integer id) {
         Product product = getManageableProduct(id);
+        product.setDeleted(true);
         Product saved = productRepository.save(product);
         eventPublisher.publishEvent(new ProductIndexEvent(id, ProductIndexEvent.Action.REMOVE));
     }
