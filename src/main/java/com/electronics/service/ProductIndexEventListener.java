@@ -16,7 +16,10 @@ public class ProductIndexEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleProductIndexEventForElasticSearch(ProductIndexEvent event) {
-        log.info("[{}] Indexing product with id = {} for elastic search.", event.productId(), Thread.currentThread().threadId());
+        log.info(
+            "[{}] Indexing product with id = {} for elastic search.",
+            event.productId(),
+            Thread.currentThread().threadId());
         log.debug(
             "Handling index event: productId={}, action={} for elastic search",
             event.productId(),
@@ -29,7 +32,10 @@ public class ProductIndexEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleProductIndexEventForEmbeddingModel(ProductIndexEvent event) {
-        log.info("[{}] Indexing product with id = {} for embedding model.", event.productId(), Thread.currentThread().threadId());
+        log.info(
+            "[{}] Indexing product with id = {} for embedding model.",
+            event.productId(),
+            Thread.currentThread().threadId());
         log.debug(
             "Handling index event: productId={}, action={} for embedding model",
             event.productId(),

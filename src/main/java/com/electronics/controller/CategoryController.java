@@ -37,8 +37,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     public CategoryResponse update(
         @PathVariable Integer id,
-        @Valid @RequestBody CategoryRequest request
-    ) {
+        @Valid @RequestBody CategoryRequest request) {
         return categoryService.update(id, request);
     }
 
