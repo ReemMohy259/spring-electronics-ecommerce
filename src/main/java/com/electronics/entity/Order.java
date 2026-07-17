@@ -28,19 +28,18 @@ public class Order {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
 
     @NotNull
     @ColumnDefault("0")
     @Column(name = "total_price", nullable = false, precision = 12, scale = 2)
     private BigDecimal totalPrice;
 
-    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @NotNull
-    @ColumnDefault("'pending'")
     @Column(name = "status", nullable = false, length = 50)
-    private String status;
+    private OrderStatus status;
 
     @NotNull
     @ColumnDefault("now()")

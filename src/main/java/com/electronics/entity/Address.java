@@ -1,12 +1,14 @@
 package com.electronics.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UuidGenerator;
 
 @Getter
 @Setter
@@ -14,7 +16,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Table(name = "address")
 public class Address {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "address_id_gen")
+    @GeneratedValue(strategy = GenerationType.UUID, generator = "address_id_gen")
     @SequenceGenerator(name = "address_id_gen", sequenceName = "address_id_seq", allocationSize = 1)
     @Column(name = "id", nullable = false)
     private Integer id;
@@ -24,6 +26,11 @@ public class Address {
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @NotBlank
+    @Size(max = 200)
+    @Column(name = "address_name", length = 200, nullable = false)
+    private String addressName;
 
     @Size(max = 100)
     @Column(name = "government", length = 100)

@@ -5,12 +5,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -52,7 +55,7 @@ public class Product {
     private Integer soldUnits;
 
     @Size(max = 100)
-    @Column(name = "sku", length = 100)
+    @Column(name = "sku", length = 100, unique = true)
     private String sku;
 
     @Column(name = "image_url", length = Integer.MAX_VALUE)
@@ -70,4 +73,26 @@ public class Product {
     @ColumnDefault("false")
     @Column(name = "deleted", nullable = false)
     private Boolean deleted;
+
+    @ManyToMany
+    @BatchSize(size = 50)
+    @JoinTable(name = "product_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"), uniqueConstraints = @UniqueConstraint(name = "uk_product_category", columnNames = {
+            "product_id", "category_id"}))
+    private Set<Category> categories = new LinkedHashSet<>();
+
+    @PrePersist
+    void initializeDefaults() {
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
+        if (stockQuantity == null) {
+            stockQuantity = 0;
+        }
+        if (soldUnits == null) {
+            soldUnits = 0;
+        }
+        if (deleted == null) {
+            deleted = false;
+        }
+    }
 }

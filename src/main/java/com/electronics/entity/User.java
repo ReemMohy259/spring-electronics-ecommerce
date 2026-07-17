@@ -1,8 +1,6 @@
 package com.electronics.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -21,34 +19,11 @@ public class User {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "first_name", nullable = false, length = 100)
-    private String firstName;
+    @Column(name = "keycloak_id", unique = true, nullable = false, updatable = false)
+    private String keycloakId;
 
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "last_name", nullable = false, length = 100)
-    private String lastName;
-
-    @Size(max = 255)
-    @NotNull
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, updatable = false, unique = true)
     private String email;
-
-    @Size(max = 100)
-    @NotNull
-    @Column(name = "username", nullable = false, length = 100)
-    private String username;
-
-    @Size(max = 255)
-    @NotNull
-    @Column(name = "password", nullable = false)
-    private String password;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
 
     @Column(name = "birth_date")
     private LocalDate birthDate;
@@ -59,4 +34,14 @@ public class User {
     @ColumnDefault("false")
     @Column(name = "deleted")
     private Boolean deleted;
+
+    @Column(name = "createdAt", updatable = false)
+    private LocalDate createdAt;
+
+    @PrePersist
+    private void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDate.now();
+        }
+    }
 }
